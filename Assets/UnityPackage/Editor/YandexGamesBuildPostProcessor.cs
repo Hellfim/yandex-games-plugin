@@ -45,6 +45,7 @@ namespace UnityPackage.Editor
             var destinationFolder = Path.GetFullPath(TemporaryTemplateFolder);
             var sourceFolder = $"{GetAbsolutePackageRootPath()}/WebGLTemplates/{TemplateName}";
 
+            Directory.CreateDirectory(destinationFolder);
             FileUtil.ReplaceDirectory(sourceFolder, destinationFolder);
 
             AssetDatabase.Refresh();
