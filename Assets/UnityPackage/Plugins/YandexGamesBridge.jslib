@@ -14,11 +14,11 @@ var yandexBridgeLibrary = {
             .then(sdk => {
                 YGP.ysdk = sdk;
                 YGP.initializationResult = 1; //InitializationResult.Success
-                console.log("YandexGamesSDK initialized");
+                console.log("[YandexGamesBridge]: YandexGamesSDK initialized");
             })
             .catch(exception => {
                 YGP.initializationResult = 2; //InitializationResult.Failure
-                console.error(exception);
+                console.error("[YandexGamesBridge]: " + exception);
             });
     },
     
