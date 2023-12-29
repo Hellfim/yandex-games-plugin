@@ -8,9 +8,15 @@
   <title>{{{ PRODUCT_NAME }}}</title>
 </head>
 <body>
-<canvas id="unity-canvas" tabindex="-1"/>
+<canvas id="unity-canvas" tabindex="-1"></canvas>
 <script src="Build/{{{ LOADER_FILENAME }}}"></script>
 <script>
+
+  var canvas = document.querySelector("#unity-canvas");
+  const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  canvas.style.height = "100%";
+  canvas.style.width = vh * ({{{WIDTH}}}/{{{HEIGHT}}}) + "px";
+
   createUnityInstance(document.querySelector("#unity-canvas"), {
     dataUrl: "Build/{{{ DATA_FILENAME }}}",
     frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
