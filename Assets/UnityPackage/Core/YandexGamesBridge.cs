@@ -11,6 +11,9 @@ namespace YandexGamesPlugin.Core
         [DllImport("__Internal")]
         private static extern Int32 GetInitializationResult();
 
+        [DllImport("__Internal")]
+        public static extern void SubmitGameReady();
+
         public static InitializationResult InitializationResult
         {
             get

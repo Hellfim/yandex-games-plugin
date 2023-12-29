@@ -25,6 +25,15 @@ var yandexBridgeLibrary = {
     GetInitializationResult: function () {
         return YGP.initializationResult;
     },
+    
+    SubmitGameReady: function () {
+        if (YGP.ysdk !== null && YGP.ysdk.features.LoadingAPI !== 'undefined' && YGP.ysdk.features.LoadingAPI !== null) {
+            YGP.ysdk.features.LoadingAPI.ready();
+        }
+        else {
+            console.error("[YandexGamesBridge]: SDK is not initialized or 'ready' feature is unavailable");
+        }
+    },
 };
 autoAddDeps(yandexBridgeLibrary, '$YGP');
 mergeInto(LibraryManager.library, yandexBridgeLibrary);
