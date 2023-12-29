@@ -12,7 +12,8 @@ namespace UnityPackage.Editor
     public class YandexGamesBuildProcessor : IPreprocessBuildWithReport, IPostprocessBuildWithReport
     {
         private const String TemplateName = "Yandex";
-        private const String ProjectTemplateFolder = "Assets/WebGLTemplates/" + TemplateName;
+        private const String ProjectTemplatesRootFolder = "Assets/WebGLTemplates/";
+        private const String TemporaryTemplateFolder = ProjectTemplatesRootFolder + TemplateName;
 
         private const String PackageName = "com.hellfim.yandex-games-plugin";
         private static Boolean IsAssetPackage => UnityEditor.PackageManager.PackageInfo.FindForAssembly(System.Reflection.Assembly.GetExecutingAssembly()) == null;
@@ -41,7 +42,7 @@ namespace UnityPackage.Editor
                 return;
             }
             
-            var destinationFolder = Path.GetFullPath(ProjectTemplateFolder);
+            var destinationFolder = Path.GetFullPath(TemporaryTemplateFolder);
             var sourceFolder = $"{GetAbsolutePackageRootPath()}/WebGLTemplates/{TemplateName}";
 
             FileUtil.ReplaceDirectory(sourceFolder, destinationFolder);
@@ -53,7 +54,13 @@ namespace UnityPackage.Editor
 
         public void OnPostprocessBuild(BuildReport report)
         {
-            AssetDatabase.DeleteAsset(ProjectTemplateFolder);
+            AssetDatabase.DeleteAsset(TemporaryTemplateFolder);
+            if (Directory.EnumerateFiles(ProjectTemplatesRootFolder).Any())
+            {
+                return;
+            }
+            
+            AssetDatabase.DeleteAsset(ProjectTemplatesRootFolder);
         }
     }
 }
