@@ -1,7 +1,9 @@
 {
     "name": "YandexGamesPlugin",
     "rootNamespace": "YandexGamesPlugin",
-    "references": [],
+    "references": [
+        "UniTask"
+    ],
     "includePlatforms": [
         "Editor",
         "WebGL"
