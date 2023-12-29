@@ -1,13 +1,17 @@
-mergeInto(LibraryManager.library,
-{	
-	let ysdk;
+var yandexBridgeLibrary = {
+    $YGP: {
+        ysdk: null,
+    },
+    
     Initialize: function (params) {
-      YaGames
-      .init(params)
-      .then(_sdk => {
-        ysdk = _sdk;
-        console.log("YandexGamesSDK initialized");
-      })
-      .catch(console.error);
-    }
-});
+        YaGames
+            .init(params)
+            .then(sdk => {
+                YGP.ysdk = sdk;
+                console.log("YandexGamesSDK initialized");
+            })
+            .catch(console.error);
+    },
+};
+autoAddDeps(yandexBridgeLibrary, '$YGP');
+mergeInto(LibraryManager.library, yandexBridgeLibrary);
