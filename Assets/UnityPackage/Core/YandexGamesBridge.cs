@@ -5,6 +5,6 @@ namespace YandexGamesPlugin.Core
     public static class YandexGamesBridge
     {
         [DllImport("__Internal")]
-        private static extern void TestMethod();
+        public static extern void Initialize();
     }
 }
