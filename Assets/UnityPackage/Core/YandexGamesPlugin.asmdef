@@ -1,6 +1,6 @@
 {
     "name": "YandexGamesPlugin",
-    "rootNamespace": "",
+    "rootNamespace": "YandexGamesPlugin",
     "references": [],
     "includePlatforms": [
         "Editor",

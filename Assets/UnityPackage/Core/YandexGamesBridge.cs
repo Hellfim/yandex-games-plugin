@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace UnityPackage.Core
+namespace YandexGamesPlugin.Core
 {
     public static class YandexGamesBridge
     {
