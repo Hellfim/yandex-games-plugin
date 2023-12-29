@@ -1,6 +1,33 @@
+html {
+    box-sizing: border-box;
+}
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+html, body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+
+    /* Disable scroll and long taps for IOS */
+    overflow: hidden;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
 body {
     text-align: center; /* Center body content */
-    padding: 0;
-    border: 0;
-    margin: 0;
+}
+/* Disable canvas focusing (key presses) */
+canvas:focus {
+    outline: none;
+}
+#unity-canvas {
+    width: calc(1vh * (390 / 844) * 100);
+    height: 100%;
+    background: #FFFFFF;
 }
