@@ -1,29 +1,25 @@
 var yandexBridgeLibrary = {
-    //InitializationResult.Undefined: 0
-    //InitializationResult.Success: 1
-    //InitializationResult.Failure: 2
-        
     $YGP: {
         ysdk: null,
-        initializationResult: 0, //InitializationResult.Undefined
+        unityListenerName: null,
+        sendUnityMessage: function (methodName, params) {
+            unityInstance.SendMessage(YGP.unityListenerName, methodName, params);
+        },
     },
     
-    Initialize: function (params) {
+    Initialize: function (listenerName) {
+        YGP.unityListenerName = UTF8ToString(listenerName);
         YaGames
-            .init(params)
+            .init()
             .then(sdk => {
                 YGP.ysdk = sdk;
-                YGP.initializationResult = 1; //InitializationResult.Success
                 console.log("[YandexGamesBridge]: YandexGamesSDK initialized");
+                YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
             })
             .catch(exception => {
-                YGP.initializationResult = 2; //InitializationResult.Failure
                 console.error("[YandexGamesBridge]: " + exception);
+                YGP.sendUnityMessage("OnSdkInitializationFailure");
             });
-    },
-    
-    GetInitializationResult: function () {
-        return YGP.initializationResult;
     },
     
     SubmitGameReady: function () {
