@@ -12,12 +12,12 @@
     <canvas id="unity-canvas" tabindex="-1"></canvas>
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
     <script>
-      var canvas = document.querySelector("#unity-canvas");
       const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+      const canvas = document.querySelector("#unity-canvas");
       canvas.style.height = "100%";
       canvas.style.width = vh * ({{{WIDTH}}}/{{{HEIGHT}}}) + "px";
-      
-      createUnityInstance(document.querySelector("#unity-canvas"), {
+
+      const config = {
         dataUrl: "Build/{{{ DATA_FILENAME }}}",
         frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
 #if USE_THREADS
@@ -38,7 +38,9 @@
         productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-    });
+      };
+      
+      createUnityInstance(canvas, config);
     </script>
   </body>
 </html>
