@@ -1,5 +1,5 @@
 {
-    "name": "YandexGames.Editor",
+    "name": "YandexGamesPlugin.Editor",
     "rootNamespace": "",
     "references": [],
     "includePlatforms": [
