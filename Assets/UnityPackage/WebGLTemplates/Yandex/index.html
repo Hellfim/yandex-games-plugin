@@ -39,8 +39,16 @@
         // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
         // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
       };
-      
-      createUnityInstance(canvas, config);
+
+      let unityInstance = null;
+
+      createUnityInstance(canvas, config)
+              .then(createdInstance => {
+                unityInstance = createdInstance;
+              })
+              .catch(error => {
+                console.error("Failed to start UnityInstance: " + error)
+              });
     </script>
   </body>
 </html>
