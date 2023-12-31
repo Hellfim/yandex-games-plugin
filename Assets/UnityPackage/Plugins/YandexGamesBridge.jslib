@@ -46,6 +46,7 @@ var yandexBridgeLibrary = {
                     onClose: () => {
                         console.log("[YandexGamesBridge]: RewardedVideoAd closed");
                         YGP.sendUnityMessage("OnRewardedVideoAdClosed");
+                        RestoreFocus();
                     },
                     onError: error => {
                         console.error("[YandexGamesBridge]: RewardedVideoAd received error [" + error.name + ", " + error.message + "]");
