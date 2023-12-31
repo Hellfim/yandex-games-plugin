@@ -2,6 +2,17 @@ var yandexBridgeLibrary = {
     $YGP: {
         ysdk: null,
         unityListenerName: null,
+        logMessage: function (message) {
+            console.log("[YandexGamesBridge]: " + message);
+        },
+        logError: function (message, error) {
+            if (error) {
+                console.error("[YandexGamesBridge]: " + message + " [" + error.name + ", " + error.message + "]");
+            }
+            else {
+                console.error("[YandexGamesBridge]: " + message);
+            }
+        },
         sendUnityMessage: function (methodName, params) {
             unityInstance.SendMessage(YGP.unityListenerName, methodName, params);
         },
@@ -13,11 +24,11 @@ var yandexBridgeLibrary = {
             .init()
             .then(sdk => {
                 YGP.ysdk = sdk;
-                console.log("[YandexGamesBridge]: SDK initialized");
+                YGP.logMessage("SDK initialized")
                 YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
             })
             .catch(error => {
-                console.error("[YandexGamesBridge]: SDK initialization failed with error [" + error.name + ", " + error.message + "]");
+                YGP.logError("SDK initialization failed with error", error);
                 YGP.sendUnityMessage("OnSdkInitializationFailure");
             });
     },
@@ -27,7 +38,7 @@ var yandexBridgeLibrary = {
             YGP.ysdk.features.LoadingAPI.ready();
         }
         else {
-            console.error("[YandexGamesBridge]: SDK is not initialized or 'ready' feature is unavailable");
+            YGP.logError("SDK is not initialized or 'ready' feature is unavailable");
         }
     },
     
@@ -36,27 +47,26 @@ var yandexBridgeLibrary = {
             YGP.ysdk.adv.showRewardedVideo({
                 callbacks: {
                     onOpen: () => {
-                        console.log("[YandexGamesBridge]: RewardedVideoAd opened");
+                        YGP.logMessage("RewardedVideoAd opened");
                         YGP.sendUnityMessage("OnRewardedVideoAdOpened");
                     },
                     onRewarded: () => {
-                        console.log("[YandexGamesBridge]: RewardedVideoAd finished");
+                        YGP.logMessage("RewardedVideoAd finished");
                         YGP.sendUnityMessage("OnRewardedVideoAdFinished");
                     },
                     onClose: () => {
-                        console.log("[YandexGamesBridge]: RewardedVideoAd closed");
+                        YGP.logMessage("RewardedVideoAd closed");
                         YGP.sendUnityMessage("OnRewardedVideoAdClosed");
-                        RestoreFocus();
                     },
                     onError: error => {
-                        console.error("[YandexGamesBridge]: RewardedVideoAd received error [" + error.name + ", " + error.message + "]");
+                        YGP.logError("RewardedVideoAd received error", error);
                         YGP.sendUnityMessage("OnRewardedVideoAdReceivedError");
                     }
                 }
             });
         }
         catch (error) {
-            console.error("[YandexGamesBridge]: RewardedVideoAd failed to display [" + error.name + ", " + error.message + "]");
+            YGP.logError("RewardedVideoAd failed to display", error);
             YGP.sendUnityMessage("OnRewardedVideoAdReceivedError");
         }
     },
@@ -66,7 +76,7 @@ var yandexBridgeLibrary = {
             YGP.ysdk.adv.showBannerAdv();
         }
         catch (error) {
-            console.error("[YandexGamesBridge]: Banner failed to display [" + error.name + ", " + error.message + "]");
+            YGP.logError("Banner failed to display", error);
         }
     },
     
@@ -75,7 +85,7 @@ var yandexBridgeLibrary = {
             YGP.ysdk.adv.hideBannerAdv();
         }
         catch (error) {
-            console.error("[YandexGamesBridge]: Banner failed to hide [" + error.name + ", " + error.message + "]");
+            YGP.logError("Banner failed to hide", error);
         }
     },
 };
