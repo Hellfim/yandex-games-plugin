@@ -13,11 +13,11 @@ var yandexBridgeLibrary = {
             .init()
             .then(sdk => {
                 YGP.ysdk = sdk;
-                console.log("[YandexGamesBridge]: YandexGamesSDK initialized");
+                console.log("[YandexGamesBridge]: SDK initialized");
                 YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
             })
-            .catch(exception => {
-                console.error("[YandexGamesBridge]: " + exception);
+            .catch(error => {
+                console.error("[YandexGamesBridge]: SDK initialization failed with error [" + error.name + ", " + error.message + "]");
                 YGP.sendUnityMessage("OnSdkInitializationFailure");
             });
     },
