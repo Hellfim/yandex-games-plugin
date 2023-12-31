@@ -59,6 +59,24 @@ var yandexBridgeLibrary = {
             YGP.sendUnityMessage("OnRewardedVideoAdReceivedError");
         }
     },
+    
+    DisplayBanner: function () {
+        try {
+            YGP.ysdk.adv.showBannerAdv();
+        }
+        catch (error) {
+            console.error("[YandexGamesBridge]: Banner failed to display [" + error.name + ", " + error.message + "]");
+        }
+    },
+    
+    HideBanner: function () {
+        try {
+            YGP.ysdk.adv.hideBannerAdv();
+        }
+        catch (error) {
+            console.error("[YandexGamesBridge]: Banner failed to hide [" + error.name + ", " + error.message + "]");
+        }
+    },
 };
 autoAddDeps(yandexBridgeLibrary, '$YGP');
 mergeInto(LibraryManager.library, yandexBridgeLibrary);

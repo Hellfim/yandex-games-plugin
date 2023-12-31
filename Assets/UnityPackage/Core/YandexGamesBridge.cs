@@ -14,6 +14,12 @@ namespace YandexGamesPlugin.Core
         
         [DllImport("__Internal")]
         public static extern void ShowRewardedVideoAd();
+        
+        [DllImport("__Internal")]
+        public static extern void DisplayBanner();
+        
+        [DllImport("__Internal")]
+        public static extern void HideBanner();
 
         public static void Initialize()
         {
