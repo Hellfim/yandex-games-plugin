@@ -11,44 +11,8 @@
   <body>
     <canvas id="unity-canvas" tabindex="-1"></canvas>
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
-    <script>
-      const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-      const canvas = document.querySelector("#unity-canvas");
-      canvas.style.height = "100%";
-      canvas.style.width = vh * ({{{WIDTH}}}/{{{HEIGHT}}}) + "px";
-
-      const config = {
-        dataUrl: "Build/{{{ DATA_FILENAME }}}",
-        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
-#if USE_THREADS
-        workerUrl: "Build/{{{ WORKER_FILENAME }}}",
-#endif
-#if USE_WASM
-        codeUrl: "Build/{{{ CODE_FILENAME }}}",
-#endif
-#if MEMORY_FILENAME
-        memoryUrl: "Build/{{{ MEMORY_FILENAME }}}",
-#endif
-#if SYMBOLS_FILENAME
-        symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
-#endif
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
-        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
-        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      };
-
-      let unityInstance = null;
-
-      createUnityInstance(canvas, config)
-              .then(createdInstance => {
-                unityInstance = createdInstance;
-              })
-              .catch(error => {
-                console.error("Failed to start UnityInstance: " + error)
-              });
-    </script>
+    <script src="common.js"></script>
+    <script src="unity-starter.js"></script>
+    <script src="canvas-aspect-ratio-processor.js"></script>
   </body>
 </html>
