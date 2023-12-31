@@ -17,6 +17,7 @@ namespace YandexGamesPlugin.Core
             const String listenerObjectName = nameof(YandexGamesBridgeEventsListener);
             var gameObject = new GameObject(listenerObjectName);
             gameObject.AddComponent<YandexGamesBridgeEventsListener>();
+            UnityEngine.Object.DontDestroyOnLoad(gameObject);
             Initialize(listenerObjectName);
         }
     }
