@@ -11,6 +11,9 @@ namespace YandexGamesPlugin.Core
 
         [DllImport("__Internal")]
         public static extern void SubmitGameReady();
+        
+        [DllImport("__Internal")]
+        public static extern void ShowRewardedVideoAd();
 
         public static void Initialize()
         {
