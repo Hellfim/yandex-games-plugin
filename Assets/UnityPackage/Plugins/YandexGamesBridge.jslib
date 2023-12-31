@@ -34,7 +34,7 @@ var yandexBridgeLibrary = {
     },
     
     SubmitGameReady: function () {
-        if (YGP.ysdk !== null && YGP.ysdk.features.LoadingAPI !== 'undefined' && YGP.ysdk.features.LoadingAPI !== null) {
+        if (YGP.ysdk !== null && typeof YGP.ysdk.features.LoadingAPI !== "undefined" && YGP.ysdk.features.LoadingAPI !== null) {
             YGP.ysdk.features.LoadingAPI.ready();
         }
         else {
