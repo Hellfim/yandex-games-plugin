@@ -41,6 +41,9 @@ namespace YandexGamesPlugin.Core
         public static extern void AuthenticatePlayer();
 
         [DllImport("__Internal")]
+        private static extern void InitializeLeaderboardsModule();
+
+        [DllImport("__Internal")]
         public static extern void SubmitLeaderboardScore(String leaderboardId, Int32 score);
 
         private static Boolean _isSDKInitialized;
@@ -50,6 +53,8 @@ namespace YandexGamesPlugin.Core
 
         public static void InitializeIAPs() => InitializeModule(InitializeIAPClient);
 
+        public static void InitializeLeaderboards() => InitializeModule(InitializeLeaderboardsModule);
+        
         public static void Initialize()
         {
             _isSDKBeingInitialized = true;

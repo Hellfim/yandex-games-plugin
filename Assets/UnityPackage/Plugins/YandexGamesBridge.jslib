@@ -3,29 +3,7 @@ var yandexBridgeLibrary = {
         ysdk: null,
         player: null,
         iapClient: null,
-        leaderboards: {
-            client: null,
-            initialize: function () {
-                return YGP.ysdk.getLeaderboards()
-                            .then(leaderboardsClient => {
-                                YGP.leaderboards.client = leaderboardsClient;
-                                YGP.logMessage("Leaderboards client initialized");
-                            })
-                            .catch(error => {
-                                YGP.logError("Failed to initialize Leaderboards client", error);
-                            });
-            },
-            submitScore: function (leaderboardId, score) {
-                try {
-                    YGP.leaderboards.client.setLeaderboardScore(leaderboardId, score);
-                    YGP.sendUnityMessage("OnLeaderboardScoreSubmissionSuccess", leaderboardId);
-                }
-                catch {
-                    YGP.logError("Failed to submit score '" + score + "' to the leaderboard with id '" + leaderboardId + "'");
-                    YGP.sendUnityMessage("OnLeaderboardScoreSubmissionFailure", leaderboardId);
-                }
-            },
-        },
+        leaderboardsModule: null,
         unityListenerName: null,
         logMessage: function (message) {
             console.log("[YandexGamesBridge]: " + message);
@@ -254,14 +232,32 @@ var yandexBridgeLibrary = {
             });
     },
     
+    InitializeLeaderboardsModule: function () {
+        try {
+            YGP.ysdk.getLeaderboards()
+                .then(leaderboardsModule => {
+                    YGP.leaderboardsModule = leaderboardsModule;
+                    YGP.logMessage("Leaderboards initialized");
+                })
+                .catch(error => {
+                    YGP.logError("Failed to initialize leaderboards", error);
+                });
+        }
+        catch (error) {
+            YGP.logError("Failed to initialize leaderboards", error);
+        }
+    },
+    
     SubmitLeaderboardScore: function (leaderboardIdPointer, score) {
         let leaderboardId = UTF8ToString(leaderboardIdPointer);
-        if (YGP.leaderboards.client == null) {
-            YGP.leaderboards.initialize().then(_ => YGP.leaderboards.submitScore(leaderboardId, score));
-            return;
+        try {
+            YGP.leaderboardsModule.setLeaderboardScore(leaderboardId, score);
+            YGP.sendUnityMessage("OnLeaderboardScoreSubmissionSuccess", leaderboardId);
         }
-        
-        YGP.leaderboards.submitScore(leaderboardId, score);
+        catch (error) {
+            YGP.logError("Failed to submit score '" + score + "' to the leaderboard with id '" + leaderboardId + "'", error);
+            YGP.sendUnityMessage("OnLeaderboardScoreSubmissionFailure", leaderboardId);
+        }
     },
 };
 autoAddDeps(yandexBridgeLibrary, '$YGP');
