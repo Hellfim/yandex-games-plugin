@@ -1,13 +1,14 @@
 var yandexBridgeLibrary = {
     $YGP: {
         ysdk: null,
+        iapClient: null,
         unityListenerName: null,
         logMessage: function (message) {
             console.log("[YandexGamesBridge]: " + message);
         },
         logError: function (message, error) {
             if (error) {
-                console.error("[YandexGamesBridge]: " + message + " [" + error.name + ", " + error.message + "]");
+                console.error("[YandexGamesBridge]: " + message + "| error: [" + error.name + ", " + error.message + "]");
             }
             else {
                 console.error("[YandexGamesBridge]: " + message);
@@ -28,13 +29,13 @@ var yandexBridgeLibrary = {
                 YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
             })
             .catch(error => {
-                YGP.logError("SDK initialization failed with error", error);
+                YGP.logError("SDK initialization failed", error);
                 YGP.sendUnityMessage("OnSdkInitializationFailure");
             });
     },
     
     SubmitGameReady: function () {
-        if (YGP.ysdk !== null && typeof YGP.ysdk.features.LoadingAPI !== "undefined" && YGP.ysdk.features.LoadingAPI !== null) {
+        if (YGP.ysdk !== null && typeof (YGP.ysdk.features.LoadingAPI) !== "undefined" && YGP.ysdk.features.LoadingAPI !== null) {
             YGP.ysdk.features.LoadingAPI.ready();
         }
         else {
@@ -59,7 +60,7 @@ var yandexBridgeLibrary = {
                         YGP.sendUnityMessage("OnRewardedVideoAdClosed");
                     },
                     onError: error => {
-                        YGP.logError("RewardedVideoAd received error", error);
+                        YGP.logError("RewardedVideoAd failed to display", error);
                         YGP.sendUnityMessage("OnRewardedVideoAdReceivedError");
                     }
                 }
@@ -86,6 +87,105 @@ var yandexBridgeLibrary = {
         }
         catch (error) {
             YGP.logError("Banner failed to hide", error);
+        }
+    },
+    
+    InitializeIAPClient: function () {
+        try {
+            YGP.ysdk.getPayments()
+                .then(iapClient => {
+                    YGP.logMessage("IAPs client initialized");
+                    YGP.iapClient = iapClient;
+                    YGP.sendUnityMessage("OnIAPClientInitialized");
+                })
+                .catch(error => {
+                    YGP.logError("Failed to initialize IAP client", error);
+                    YGP.sendUnityMessage("OnIAPClientInitializationFailed", "[" + error.name + ", " + error.message + "]");
+                })
+        }
+        catch (error) {
+            YGP.logError("Failed to initialize IAP client", error);
+            YGP.sendUnityMessage("OnIAPClientInitializationFailed", "[" + error.name + ", " + error.message + "]");
+        }
+    },
+    
+    LoadIAPProducts: function () {
+        try {
+            YGP.iapClient.getCatalog()
+                .then(products => {
+                    let productsMetadata = [];
+                    for (let i = 0; i < products.length; ++i) {
+                        productsMetadata[i] = {
+                            Id: products[i].id,
+                            Title: products[i].title,
+                            Description: products[i].description,
+                            Price: products[i].price,
+                            PriceValue: products[i].priceValue,
+                            PriceCurrencyCode: products[i].priceCurrencyCode,
+                        }
+                    }
+                    
+                    YGP.sendUnityMessage("OnIAPProductsLoaded", JSON.stringify(productsMetadata));
+                });
+        }
+        catch (error) {
+            YGP.logError("Failed to load products", error);
+        }
+    },
+    
+    PurchaseProduct: function (productIdPointer) {
+        let id = UTF8ToString(productIdPointer);
+        try {
+            YGP.iapClient.purchase(id)
+                .then(purchase => {
+                    YGP.logMessage("Successfully purchased " + id);
+                    YGP.sendUnityMessage("OnProductPurchased", purchase.productID);
+                    RestoreFocus();
+                })
+                .catch(error => {
+                    YGP.logError("Failed to purchase " + id, error);
+                    YGP.sendUnityMessage("OnProductPurchaseFailed", id);
+                    RestoreFocus();
+                })
+        }
+        catch (error) {
+            YGP.logError("Failed to purchase '" + id + "'", error);
+            RestoreFocus();
+        }
+    },
+    
+    ConsumeProduct: function (productIdPointer) {
+        let id = UTF8ToString(productIdPointer);
+        try {
+            YGP.iapClient.getPurchases()
+                .then(purchases => {
+                    for (i = 0; i < purchases.length; ++i) {
+                        if (purchases[i].productID === id) {
+                            YGP.iapClient.consumePurchase(purchases[i].purchaseToken);
+                            YGP.logMessage("Product with id '" + id + "' successfully consumed");
+                        }
+                    }
+                });
+        }
+        catch (error) {
+            YGP.logError("Failed to consume product with '" + id + "'", error);
+        }
+    },
+    
+    ProcessUnconsumedProducts: function () {
+        try {
+            YGP.iapClient.getPurchases()
+                .then(purchases => {
+                    for (i = 0; i < purchases.length; ++i) {
+                        if (purchases[i].productID === id) {
+                            YGP.logMessage("Found unconsumed product with id '" + id + "', trying to process it once again.");
+                            YGP.sendUnityMessage("OnProductPurchased", purchase.productID);                            
+                        }
+                    }
+                });
+        }
+        catch (error) {
+            YGP.logError("Failed to process unconsumed products", error);
         }
     },
 };

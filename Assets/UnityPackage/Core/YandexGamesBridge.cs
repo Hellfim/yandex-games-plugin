@@ -20,6 +20,21 @@ namespace YandexGamesPlugin.Core
         
         [DllImport("__Internal")]
         public static extern void HideBanner();
+        
+        [DllImport("__Internal")]
+        public static extern void InitializeIAPClient();
+
+        [DllImport("__Internal")]
+        public static extern void LoadIAPProducts();
+
+        [DllImport("__Internal")]
+        public static extern void PurchaseProduct(String productId);
+
+        [DllImport("__Internal")]
+        public static extern void ConsumeProduct(String productId);
+
+        [DllImport("__Internal")]
+        public static extern void ProcessUnconsumedProducts();
 
         public static void Initialize()
         {

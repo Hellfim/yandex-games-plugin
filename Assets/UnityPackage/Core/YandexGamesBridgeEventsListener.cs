@@ -5,21 +5,28 @@ namespace YandexGamesPlugin.Core
 {
     public class YandexGamesBridgeEventsListener : MonoBehaviour
     {
-        public static event Action Initialized;
-        public static event Action InitializationFailed;
+        public static event Action SdkInitialized;
+        public static event Action SdkInitializationFailed;
+        
         public static event Action RewardedVideoAdOpened;
         public static event Action RewardedVideoAdFinished;
         public static event Action RewardedVideoAdClosed;
         public static event Action RewardedVideoAdReceivedError;
+
+        public static event Action IAPClientInitialized;
+        public static event Action<String> IAPClientInitializationFailed;
+        public static event Action<String> IAPProductsLoaded;
+        public static event Action<String> ProductPurchased;
+        public static event Action<String> ProductPurchaseFailed;
         
         private void OnSdkSuccessfullyInitialized()
         {
-            Initialized?.Invoke();
+            SdkInitialized?.Invoke();
         }
         
         private void OnSdkInitializationFailure()
         {
-            InitializationFailed?.Invoke();
+            SdkInitializationFailed?.Invoke();
         }
         
         private void OnRewardedVideoAdOpened()
@@ -40,6 +47,31 @@ namespace YandexGamesPlugin.Core
         private void OnRewardedVideoAdReceivedError()
         {
             RewardedVideoAdReceivedError?.Invoke();
+        }
+        
+        private void OnIAPClientInitialized()
+        {
+            IAPClientInitialized?.Invoke();
+        }
+        
+        private void OnIAPClientInitializationFailed(String message)
+        {
+            IAPClientInitializationFailed?.Invoke(message);
+        }
+        
+        private void OnIAPProductsLoaded(String jsonProductsMetadata)
+        {
+            IAPProductsLoaded?.Invoke(jsonProductsMetadata);
+        }
+        
+        private void OnProductPurchased(String productId)
+        {
+            ProductPurchased?.Invoke(productId);
+        }
+        
+        private void OnProductPurchaseFailed(String productId)
+        {
+            ProductPurchaseFailed?.Invoke(productId);
         }
     }
 }
