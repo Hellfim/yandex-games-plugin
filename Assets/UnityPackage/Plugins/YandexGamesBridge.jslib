@@ -3,6 +3,29 @@ var yandexBridgeLibrary = {
         ysdk: null,
         player: null,
         iapClient: null,
+        leaderboards: {
+            client: null,
+            initialize: function () {
+                return YGP.ysdk.getLeaderboards()
+                            .then(leaderboardsClient => {
+                                YGP.leaderboards.client = leaderboardsClient;
+                                YGP.logMessage("Leaderboards client initialized");
+                            })
+                            .catch(error => {
+                                YGP.logError("Failed to initialize Leaderboards client", error);
+                            });
+            },
+            submitScore: function (leaderboardId, score) {
+                try {
+                    YGP.leaderboards.client.setLeaderboardScore(leaderboardId, score);
+                    YGP.sendUnityMessage("OnLeaderboardScoreSubmissionSuccess", leaderboardId);
+                }
+                catch {
+                    YGP.logError("Failed to submit score '" + score + "' to the leaderboard with id '" + leaderboardId + "'");
+                    YGP.sendUnityMessage("OnLeaderboardScoreSubmissionFailure", leaderboardId);
+                }
+            },
+        },
         unityListenerName: null,
         logMessage: function (message) {
             console.log("[YandexGamesBridge]: " + message);
@@ -229,6 +252,16 @@ var yandexBridgeLibrary = {
                 YGP.logError("Failed to authenticate player", error);
                 YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
             });
+    },
+    
+    SubmitLeaderboardScore: function (leaderboardIdPointer, score) {
+        let leaderboardId = UTF8ToString(leaderboardIdPointer);
+        if (YGP.leaderboards.client == null) {
+            YGP.leaderboards.initialize().then(_ => YGP.leaderboards.submitScore(leaderboardId, score));
+            return;
+        }
+        
+        YGP.leaderboards.submitScore(leaderboardId, score);
     },
 };
 autoAddDeps(yandexBridgeLibrary, '$YGP');

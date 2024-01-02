@@ -22,6 +22,8 @@ namespace YandexGamesPlugin.Core
         public static event Action PlayerAuthenticated;
         public static event Action PlayerAuthenticationFailed;
         
+        public static event Action<String, Boolean> LeaderboardScoreProcessed;
+        
         private void OnSdkSuccessfullyInitialized()
         {
             SdkInitialized?.Invoke();
@@ -85,6 +87,16 @@ namespace YandexGamesPlugin.Core
         private void OnPlayerAuthenticationFailed()
         {
             PlayerAuthenticationFailed?.Invoke();
+        }
+        
+        private void OnLeaderboardScoreSubmissionSuccess(String leaderboardId)
+        {
+            LeaderboardScoreProcessed?.Invoke(leaderboardId, true);
+        }
+        
+        private void OnLeaderboardScoreSubmissionFailure(String leaderboardId)
+        {
+            LeaderboardScoreProcessed?.Invoke(leaderboardId, false);
         }
     }
 }

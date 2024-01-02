@@ -39,6 +39,9 @@ namespace YandexGamesPlugin.Core
         [DllImport("__Internal")]
         public static extern void AuthenticatePlayer();
 
+        [DllImport("__Internal")]
+        public static extern void SubmitLeaderboardScore(String leaderboardId, Int32 score);
+
         public static void Initialize()
         {
             const String listenerObjectName = nameof(YandexGamesBridgeEventsListener);
