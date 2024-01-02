@@ -2,7 +2,7 @@ var yandexBridgeLibrary = {
     $YGP: {
         ysdk: null,
         player: null,
-        iapClient: null,
+        iapModule: null,
         leaderboardsModule: null,
         unityListenerName: null,
         logMessage: function (message) {
@@ -99,28 +99,28 @@ var yandexBridgeLibrary = {
         }
     },
     
-    InitializeIAPClient: function () {
+    InitializeIAPModule: function () {
         try {
             YGP.ysdk.getPayments()
-                .then(iapClient => {
-                    YGP.logMessage("IAPs client initialized");
-                    YGP.iapClient = iapClient;
-                    YGP.sendUnityMessage("OnIAPClientInitialized");
+                .then(iapModule => {
+                    YGP.logMessage("IAPs module initialized");
+                    YGP.iapModule = iapModule;
+                    YGP.sendUnityMessage("OnIAPModuleInitialized");
                 })
                 .catch(error => {
-                    YGP.logError("Failed to initialize IAP client", error);
-                    YGP.sendUnityMessage("OnIAPClientInitializationFailed", "[" + error.name + ", " + error.message + "]");
+                    YGP.logError("Failed to initialize IAP module", error);
+                    YGP.sendUnityMessage("OnIAPModuleInitializationFailed", "[" + error.name + ", " + error.message + "]");
                 })
         }
         catch (error) {
-            YGP.logError("Failed to initialize IAP client", error);
-            YGP.sendUnityMessage("OnIAPClientInitializationFailed", "[" + error.name + ", " + error.message + "]");
+            YGP.logError("Failed to initialize IAP module", error);
+            YGP.sendUnityMessage("OnIAPModuleInitializationFailed", "[" + error.name + ", " + error.message + "]");
         }
     },
     
     LoadIAPProducts: function () {
         try {
-            YGP.iapClient.getCatalog()
+            YGP.iapModule.getCatalog()
                 .then(products => {
                     let productsMetadata = [];
                     for (let i = 0; i < products.length; ++i) {
@@ -145,7 +145,7 @@ var yandexBridgeLibrary = {
     PurchaseProduct: function (productIdPointer) {
         let id = UTF8ToString(productIdPointer);
         try {
-            YGP.iapClient.purchase(id)
+            YGP.iapModule.purchase(id)
                 .then(purchase => {
                     YGP.logMessage("Successfully purchased " + id);
                     YGP.sendUnityMessage("OnProductPurchased", purchase.productID);
@@ -166,11 +166,11 @@ var yandexBridgeLibrary = {
     ConsumeProduct: function (productIdPointer) {
         let id = UTF8ToString(productIdPointer);
         try {
-            YGP.iapClient.getPurchases()
+            YGP.iapModule.getPurchases()
                 .then(purchases => {
                     for (i = 0; i < purchases.length; ++i) {
                         if (purchases[i].productID === id) {
-                            YGP.iapClient.consumePurchase(purchases[i].purchaseToken);
+                            YGP.iapModule.consumePurchase(purchases[i].purchaseToken);
                             YGP.logMessage("Product with id '" + id + "' successfully consumed");
                         }
                     }
@@ -183,7 +183,7 @@ var yandexBridgeLibrary = {
     
     ProcessUnconsumedProducts: function () {
         try {
-            YGP.iapClient.getPurchases()
+            YGP.iapModule.getPurchases()
                 .then(purchases => {
                     for (i = 0; i < purchases.length; ++i) {
                         if (purchases[i].productID === id) {

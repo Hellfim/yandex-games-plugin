@@ -23,7 +23,7 @@ namespace YandexGamesPlugin.Core
         public static extern void HideBanner();
         
         [DllImport("__Internal")]
-        private static extern void InitializeIAPClient();
+        private static extern void InitializeIAPModule();
 
         [DllImport("__Internal")]
         public static extern void LoadIAPProducts();
@@ -51,7 +51,7 @@ namespace YandexGamesPlugin.Core
 
         private static readonly List<Action> _initializationCallbacks = new List<Action>();
 
-        public static void InitializeIAPs() => InitializeModule(InitializeIAPClient);
+        public static void InitializeIAPs() => InitializeModule(InitializeIAPModule);
 
         public static void InitializeLeaderboards() => InitializeModule(InitializeLeaderboardsModule);
         

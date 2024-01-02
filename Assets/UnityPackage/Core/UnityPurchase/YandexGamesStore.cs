@@ -33,8 +33,8 @@ namespace YandexGamesPlugin.Core.UnityPurchase
 
             YandexGamesBridge.InitializeIAPs();
             
-            YandexGamesBridgeEventsListener.IAPClientInitialized += OnIAPClientInitialized;
-            YandexGamesBridgeEventsListener.IAPClientInitializationFailed += OnIAPClientInitializationFailed;
+            YandexGamesBridgeEventsListener.IAPModuleInitialized += OnIAPModuleInitialized;
+            YandexGamesBridgeEventsListener.IAPModuleInitializationFailed += OnIAPModuleInitializationFailed;
             YandexGamesBridgeEventsListener.IAPProductsLoaded += OnIAPProductsLoaded;
             YandexGamesBridgeEventsListener.ProductPurchased += OnProductPurchased;
             YandexGamesBridgeEventsListener.ProductPurchaseFailed += OnProductPurchaseFailed;
@@ -68,14 +68,14 @@ namespace YandexGamesPlugin.Core.UnityPurchase
             }
         }
 
-        private void OnIAPClientInitialized()
+        private void OnIAPModuleInitialized()
         {
             _isClientInitialized = true;
 
             LoadProducts();
         }
 
-        private void OnIAPClientInitializationFailed(String message)
+        private void OnIAPModuleInitializationFailed(String message)
         {
             _storeEvents.OnSetupFailed(InitializationFailureReason.PurchasingUnavailable, message);
         }

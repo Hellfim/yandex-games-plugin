@@ -13,8 +13,8 @@ namespace YandexGamesPlugin.Core
         public static event Action RewardedVideoAdClosed;
         public static event Action RewardedVideoAdReceivedError;
 
-        public static event Action IAPClientInitialized;
-        public static event Action<String> IAPClientInitializationFailed;
+        public static event Action IAPModuleInitialized;
+        public static event Action<String> IAPModuleInitializationFailed;
         public static event Action<String> IAPProductsLoaded;
         public static event Action<String> ProductPurchased;
         public static event Action<String> ProductPurchaseFailed;
@@ -54,14 +54,14 @@ namespace YandexGamesPlugin.Core
             RewardedVideoAdReceivedError?.Invoke();
         }
         
-        private void OnIAPClientInitialized()
+        private void OnIAPModuleInitialized()
         {
-            IAPClientInitialized?.Invoke();
+            IAPModuleInitialized?.Invoke();
         }
         
-        private void OnIAPClientInitializationFailed(String message)
+        private void OnIAPModuleInitializationFailed(String message)
         {
-            IAPClientInitializationFailed?.Invoke(message);
+            IAPModuleInitializationFailed?.Invoke(message);
         }
         
         private void OnIAPProductsLoaded(String jsonProductsMetadata)
