@@ -19,6 +19,9 @@ namespace YandexGamesPlugin.Core
         public static event Action<String> ProductPurchased;
         public static event Action<String> ProductPurchaseFailed;
         
+        public static event Action PlayerAuthenticated;
+        public static event Action PlayerAuthenticationFailed;
+        
         private void OnSdkSuccessfullyInitialized()
         {
             SdkInitialized?.Invoke();
@@ -72,6 +75,16 @@ namespace YandexGamesPlugin.Core
         private void OnProductPurchaseFailed(String productId)
         {
             ProductPurchaseFailed?.Invoke(productId);
+        }
+        
+        private void OnPlayerAuthenticated()
+        {
+            PlayerAuthenticated?.Invoke();
+        }
+        
+        private void OnPlayerAuthenticationFailed()
+        {
+            PlayerAuthenticationFailed?.Invoke();
         }
     }
 }

@@ -1,6 +1,7 @@
 var yandexBridgeLibrary = {
     $YGP: {
         ysdk: null,
+        player: null,
         iapClient: null,
         unityListenerName: null,
         logMessage: function (message) {
@@ -13,6 +14,13 @@ var yandexBridgeLibrary = {
             else {
                 console.error("[YandexGamesBridge]: " + message);
             }
+        },
+        initializePlayer: function () {
+            return YGP.ysdk.getPlayer()
+                       .then(player => {
+                           YGP.player = player;
+                           return player;
+                       });
         },
         sendUnityMessage: function (methodName, params) {
             unityInstance.SendMessage(YGP.unityListenerName, methodName, params);
@@ -187,6 +195,40 @@ var yandexBridgeLibrary = {
         catch (error) {
             YGP.logError("Failed to process unconsumed products", error);
         }
+    },
+    
+    AuthenticatePlayer: function () {
+        YGP.initializePlayer()
+            .then(player => {
+                let authenticationStatus = player.getMode();
+                YGP.logMessage("Authentication status (mode): '" + authenticationStatus "'");
+                if (authenticationStatus === "lite") { //Unauthenticated
+                    YGP.ysdk.auth.openAuthDialog()
+                        .then(() => {
+                            YGP.initializePlayer()
+                                .then(player => {
+                                    YGP.logMessage("Player authenticated successfully!");
+                                    YGP.sendUnityMessage("OnPlayerAuthenticated");
+                                })
+                                .catch(error => {
+                                    YGP.logError("Failed to authenticate player", error);
+                                    YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
+                                });
+                        })
+                        .catch(error => {
+                            YGP.logError("Failed to authenticate player", error);
+                            YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
+                        });
+                }
+                else {
+                    YGP.logMessage("Player authenticated successfully!");
+                    YGP.sendUnityMessage("OnPlayerAuthenticated");
+                }
+            })
+            .catch(error => {
+                YGP.logError("Failed to authenticate player", error);
+                YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
+            });
     },
 };
 autoAddDeps(yandexBridgeLibrary, '$YGP');

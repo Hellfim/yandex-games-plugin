@@ -36,6 +36,9 @@ namespace YandexGamesPlugin.Core
         [DllImport("__Internal")]
         public static extern void ProcessUnconsumedProducts();
 
+        [DllImport("__Internal")]
+        public static extern void AuthenticatePlayer();
+
         public static void Initialize()
         {
             const String listenerObjectName = nameof(YandexGamesBridgeEventsListener);
