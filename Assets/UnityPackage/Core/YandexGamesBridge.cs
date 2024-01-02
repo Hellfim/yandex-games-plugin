@@ -44,6 +44,7 @@ namespace YandexGamesPlugin.Core
         public static extern void SubmitLeaderboardScore(String leaderboardId, Int32 score);
 
         private static Boolean _isSDKInitialized;
+        private static Boolean _isSDKBeingInitialized;
 
         private static readonly List<Action> _initializationCallbacks = new List<Action>();
 
@@ -51,18 +52,23 @@ namespace YandexGamesPlugin.Core
 
         public static void Initialize()
         {
+            _isSDKBeingInitialized = true;
+            
             const String listenerObjectName = nameof(YandexGamesBridgeEventsListener);
             var gameObject = new GameObject(listenerObjectName);
             gameObject.AddComponent<YandexGamesBridgeEventsListener>();
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
             
             YandexGamesBridgeEventsListener.SdkInitialized += OnSdkInitialized;
+            YandexGamesBridgeEventsListener.SdkInitializationFailed += OnSdkInitializationFailed;
             Initialize(listenerObjectName);
         }
 
         private static void OnSdkInitialized()
         {
             YandexGamesBridgeEventsListener.SdkInitialized -= OnSdkInitialized;
+            YandexGamesBridgeEventsListener.SdkInitializationFailed -= OnSdkInitializationFailed;
+            _isSDKBeingInitialized = false;
             _isSDKInitialized = true;
             foreach (var initializationCallback in _initializationCallbacks)
             {
@@ -70,6 +76,13 @@ namespace YandexGamesPlugin.Core
             }
             
             _initializationCallbacks.Clear();
+        }
+
+        private static void OnSdkInitializationFailed()
+        {
+            YandexGamesBridgeEventsListener.SdkInitialized -= OnSdkInitialized;
+            YandexGamesBridgeEventsListener.SdkInitializationFailed -= OnSdkInitializationFailed;
+            _isSDKBeingInitialized = false;
         }
 
         private static void InitializeModule(Action initializationMethod)
@@ -81,6 +94,12 @@ namespace YandexGamesPlugin.Core
             else
             {
                 _initializationCallbacks.Add(initializationMethod);
+                if (_isSDKBeingInitialized)
+                {
+                    return;
+                }
+                
+                Initialize();
             }
         }
     }
