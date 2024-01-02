@@ -201,7 +201,7 @@ var yandexBridgeLibrary = {
         YGP.initializePlayer()
             .then(player => {
                 let authenticationStatus = player.getMode();
-                YGP.logMessage("Authentication status (mode): '" + authenticationStatus "'");
+                YGP.logMessage("Authentication status (mode): '" + authenticationStatus + "'");
                 if (authenticationStatus === "lite") { //Unauthenticated
                     YGP.ysdk.auth.openAuthDialog()
                         .then(() => {
