@@ -57,6 +57,11 @@ namespace YandexGamesPlugin.Core
         
         public static void Initialize()
         {
+            if (_isSDKInitialized || _isSDKBeingInitialized)
+            {
+                return;
+            }
+            
             _isSDKBeingInitialized = true;
             
             const String listenerObjectName = nameof(YandexGamesBridgeEventsListener);
