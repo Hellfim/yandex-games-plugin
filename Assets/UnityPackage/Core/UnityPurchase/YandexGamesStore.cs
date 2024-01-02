@@ -31,7 +31,7 @@ namespace YandexGamesPlugin.Core.UnityPurchase
         {
             _storeEvents = callback;
 
-            YandexGamesBridge.InitializeIAPClient();
+            YandexGamesBridge.InitializeIAPs();
             
             YandexGamesBridgeEventsListener.IAPClientInitialized += OnIAPClientInitialized;
             YandexGamesBridgeEventsListener.IAPClientInitializationFailed += OnIAPClientInitializationFailed;
