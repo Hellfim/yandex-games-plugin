@@ -42,7 +42,7 @@ namespace YandexGamesPlugin.Core.UnityPurchase
 
         void IStore.RetrieveProducts(ReadOnlyCollection<ProductDefinition> products)
         {
-            Debug.Log($"[YandexGamesStore] IAP RetrievedProducts:\n{String.Join("Product Id: \n", products.Select(definition => definition.id))}");
+            Debug.Log($"[YandexGamesStore] IAP RetrievedProducts:\n{String.Join("\n", products.Select(definition => $"Product Id: {definition.id}"))}");
 
             _productDefinitions = products;
 
