@@ -45,6 +45,9 @@ namespace YandexGamesPlugin.Core
 
         [DllImport("__Internal")]
         public static extern void SubmitLeaderboardScore(String leaderboardId, Int32 score);
+        
+        [DllImport("__Internal")]
+        public static extern void DisplayInAppReviewPopup();
 
         private static Boolean _isSDKInitialized;
         private static Boolean _isSDKBeingInitialized;

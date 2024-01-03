@@ -259,6 +259,32 @@ var yandexBridgeLibrary = {
             YGP.sendUnityMessage("OnLeaderboardScoreSubmissionFailure", leaderboardId);
         }
     },
+
+    DisplayInAppReviewPopup: function () {
+        try {
+            YGP.ysdk.feedback.canReview()
+                .then(({value, reason}) => {
+                    if (value) {
+                        YGP.ysdk.feedback.requestReview()
+                            .then(userResult => {
+                                YGP.logMessage("User review result: " + userResult);
+                            })
+                            .catch(error => {
+                                YGP.logError("Failed to request review", error);
+                            });
+                    }
+                    else {
+                        YGP.logMessage("Review is unavailable: " + reason);
+                    }
+                })
+                .catch(error => {
+                    YGP.logError("Failed to identify canReview state", error);
+                });
+        }
+        catch (error) {
+            YGP.logError("Failed display review dialog", error);
+        }
+    },
 };
 autoAddDeps(yandexBridgeLibrary, '$YGP');
 mergeInto(LibraryManager.library, yandexBridgeLibrary);
