@@ -48,6 +48,8 @@ namespace UnityPackage.Editor
             Directory.CreateDirectory(destinationFolder);
             FileUtil.ReplaceDirectory(sourceFolder, destinationFolder);
 
+            RegenerateGuids(destinationFolder);
+            
             AssetDatabase.Refresh();
 
             PlayerSettings.WebGL.template = $"PROJECT:{TemplateName}";
@@ -62,6 +64,24 @@ namespace UnityPackage.Editor
             }
             
             AssetDatabase.DeleteAsset(ProjectTemplatesRootFolder);
+        }
+
+        private static void RegenerateGuids(String destinationFolder)
+        {
+            var filePaths = Directory.GetFiles(destinationFolder, "*.meta");
+            foreach (var filePath in filePaths)
+            {
+                var lines = File.ReadAllLines(filePath);
+                var guidLineIndex = Array.FindIndex(lines, line => line.StartsWith("guid:"));
+                if (guidLineIndex < 0)
+                {
+                    Debug.LogWarning($"Failed to find file GUID for file: {filePath}");
+                    continue;
+                }
+
+                lines[guidLineIndex] = $"guid: {GUID.Generate()}";
+                File.WriteAllLines(filePath, lines);
+            }
         }
     }
 }
