@@ -1,7 +1,6 @@
 var yandexBridgeLibrary = {
     $YGP: {
         ysdk: null,
-        player: null,
         iapModule: null,
         leaderboardsModule: null,
         unityListenerName: null,
@@ -15,13 +14,6 @@ var yandexBridgeLibrary = {
             else {
                 console.error("[YandexGamesBridge]: " + message);
             }
-        },
-        initializePlayer: function () {
-            return YGP.ysdk.getPlayer()
-                       .then(player => {
-                           YGP.player = player;
-                           return player;
-                       });
         },
         sendUnityMessage: function (methodName, params) {
             unityInstance.SendMessage(YGP.unityListenerName, methodName, params);
@@ -199,14 +191,14 @@ var yandexBridgeLibrary = {
     },
     
     AuthenticatePlayer: function () {
-        YGP.initializePlayer()
+        YGP.ysdk.getPlayer()
             .then(player => {
                 let authenticationStatus = player.getMode();
                 YGP.logMessage("Authentication status (mode): '" + authenticationStatus + "'");
                 if (authenticationStatus === "lite") { //Unauthenticated
                     YGP.ysdk.auth.openAuthDialog()
                         .then(() => {
-                            YGP.initializePlayer()
+                            YGP.ysdk.getPlayer()
                                 .then(player => {
                                     YGP.logMessage("Player authenticated successfully!");
                                     YGP.sendUnityMessage("OnPlayerAuthenticated");
