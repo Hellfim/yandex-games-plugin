@@ -198,15 +198,8 @@ var yandexBridgeLibrary = {
                 if (authenticationStatus === "lite") { //Unauthenticated
                     YGP.ysdk.auth.openAuthDialog()
                         .then(() => {
-                            YGP.ysdk.getPlayer()
-                                .then(player => {
-                                    YGP.logMessage("Player authenticated successfully!");
-                                    YGP.sendUnityMessage("OnPlayerAuthenticated");
-                                })
-                                .catch(error => {
-                                    YGP.logError("Failed to authenticate player", error);
-                                    YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
-                                });
+                            YGP.logMessage("Player authenticated successfully!");
+                            YGP.sendUnityMessage("OnPlayerAuthenticated");
                         })
                         .catch(error => {
                             YGP.logError("Failed to authenticate player", error);
