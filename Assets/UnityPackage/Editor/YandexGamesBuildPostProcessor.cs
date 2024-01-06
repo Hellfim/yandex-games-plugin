@@ -7,7 +7,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-namespace UnityPackage.Editor
+namespace YandexGamesPlugin.Editor
 {
     public class YandexGamesBuildProcessor : IPreprocessBuildWithReport, IPostprocessBuildWithReport
     {
