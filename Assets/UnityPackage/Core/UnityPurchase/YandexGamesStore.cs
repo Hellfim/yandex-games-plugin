@@ -92,7 +92,7 @@ namespace YandexGamesPlugin.Core.UnityPurchase
         
         private void OnIAPProductsLoaded(String jsonProductsMetadata)
         {
-            _storeEvents.OnProductsRetrieved(GetArrayFromJson<YandexGamesProductInfo>(jsonProductsMetadata)
+            _storeEvents.OnProductsRetrieved(YandexGamesUtils.GetArrayFromJson<YandexGamesProductInfo>(jsonProductsMetadata)
                                              .Select(GetProductDescriptionFromYandexGamesProductInfo)
                                              .ToList());
 
@@ -114,19 +114,6 @@ namespace YandexGamesPlugin.Core.UnityPurchase
         private void OnProductPurchaseFailed(String productId)
         {
             _storeEvents.OnPurchaseFailed(new PurchaseFailureDescription(productId, PurchaseFailureReason.Unknown, "See console for details"));
-        }
-
-        private static T[] GetArrayFromJson<T>(String json)
-        {
-            var newJson = "{ \"array\": " + json + "}";
-            var wrapper = JsonUtility.FromJson<Wrapper<T>>(newJson);
-            return wrapper.array;
-        }
-
-        [Serializable]
-        private class Wrapper<T>
-        {
-            public T[] array;
         }
     }
 }
