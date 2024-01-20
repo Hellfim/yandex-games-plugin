@@ -28,24 +28,27 @@ const ygp_sdk_mock_leaderboardsModule = {
         ygp_mock_helper.logMessage("leaderboardsModule.getLeaderboardEntries");
         return new Promise((resolve, reject) => {
             let maxScore = 10000;
+            let playerPosition = 0;
             let dummyEntries = [];
-            for (let i = 0; i < params.quantityTop; ++i) {
-                dummyEntries[i] = this.createLeaderboardEntry(i, "DummyPlayerName" + i, maxScore - i * 34);
-            }
-
-            if (params.quantityTop > 1) { //Swapping elements to simulate sequence is out of order
-                let tempEntry = dummyEntries[0];
-                dummyEntries[0] = dummyEntries[dummyEntries.length - 1];
-                dummyEntries[dummyEntries.length - 1] = tempEntry;
-            }
 
             if (params.includeUser) {
-                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(dummyEntries.length, "Someone better than you", 20);
-                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(dummyEntries.length, "YOU", 10);
-                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(dummyEntries.length, "Someone worse than you", 0);
+                playerPosition = 342;
+                let playerScore = 240;
+                dummyEntries[0] = this.createLeaderboardEntry(playerPosition, "YOU", playerScore);
+                for (let i = 0; i < params.quantityAround; ++i) {
+                    dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(playerPosition - i - 1, "CoolGuy" + (i + 1), playerScore + (i + 1) * 23);
+                }
+                for (let i = 0; i < params.quantityAround; ++i) {
+                    dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(playerPosition + i + 1, "LameGuy" + (i + 1), playerScore - (i + 1) * 13);
+                }
+            }
+
+            for (let i = 0; i < params.quantityTop; ++i) {
+                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(i + 1, "ReallyCoolGuy" + i, maxScore - i * 34);
             }
 
             resolve({
+                userRank: playerPosition,
                 entries: dummyEntries,
             });
         });

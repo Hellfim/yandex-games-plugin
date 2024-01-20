@@ -8,5 +8,6 @@ namespace YandexGamesPlugin.Core
         public Int32 Rank;
         public String Username;
         public Int32 Score;
+        public Boolean IsPlayerEntry;
     }
 }
