@@ -15,8 +15,8 @@ var yandexBridgeLibrary = {
                 console.error("[YandexGamesBridge]: " + message);
             }
         },
-        sendUnityMessage: function (methodName, params) {
-            unityInstance.SendMessage(YGP.unityListenerName, methodName, params);
+        sendUnityMessage: function (methodName, optionalParameter) { //multiple optinal parameters are not supported by Unity's SendMessage
+            unityInstance.SendMessage(YGP.unityListenerName, methodName, optionalParameter);
         },
     },
     
@@ -242,6 +242,35 @@ var yandexBridgeLibrary = {
         catch (error) {
             YGP.logError("Failed to submit score '" + score + "' to the leaderboard with id '" + leaderboardId + "'", error);
             YGP.sendUnityMessage("OnLeaderboardScoreSubmissionFailure", leaderboardId);
+        }
+    },
+    
+    GetLeaderboardEntries: function (leaderboardIdPointer, includePlayer, topEntriesCount, surroundingEntriesCount) {
+        let leaderboardId = UTF8ToString(leaderboardIdPointer);
+        try {
+            YGP.leaderboardsModule
+                .getLeaderboardEntries(leaderboardId, {
+                    includeUser: includePlayer,
+                    quantityTop: topEntriesCount,
+                    quantityAround: surroundingEntriesCount
+                })
+                .then(result => {
+                    let entries = [];
+                    for (let i = 0; i < result.entries.length; ++i) {
+                        entries[i] = {
+                            Username: result.entries[i].player.scopePermissions.public_name == "allow" ? result.entries[i].player.publicName : "anonymous",
+                            Score: result.entries[i].score,
+                        };
+                    }
+                    
+                    YGP.sendUnityMessage("OnLeaderboardRecordsReceived", JSON.stringify({
+                        LeaderboardId: leaderboardId,
+                        Entries: entries,
+                    }));
+                });
+        }
+        catch (error) {
+            YGP.logError("Failed to get leaderboard '" + leaderboardId + "' entries", error);
         }
     },
 

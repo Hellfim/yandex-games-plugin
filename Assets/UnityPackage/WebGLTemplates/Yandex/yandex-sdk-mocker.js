@@ -9,8 +9,39 @@ const ygp_mock_helper = {
 }
 
 const ygp_sdk_mock_leaderboardsModule = {
+    createLeaderboardEntry: function (username, score) {
+        return {
+            score: score,
+            player: {
+                publicName: username,
+                scopePermissions: {
+                    public_name: "allow"
+                }
+            }
+        };
+    },
     setLeaderboardScore: function (leaderboardId, score) {
         ygp_mock_helper.logMessage("leaderboardsModule.setLeaderboardScore");
+    },
+    getLeaderboardEntries: function (leaderboardId, params) {
+        ygp_mock_helper.logMessage("leaderboardsModule.getLeaderboardEntries");
+        return new Promise((resolve, reject) => {
+            let maxScore = 10000;
+            let dummyEntries = [];
+            for (let i = 0; i < params.quantityTop; ++i) {
+                dummyEntries[i] = this.createLeaderboardEntry("DummyPlayerName" + i, maxScore - i * 34);
+            }
+
+            if (params.includeUser) {
+                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry("Someone better than you", 20);
+                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry("YOU", 10);
+                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry("Someone worse than you", 0);
+            }
+
+            resolve({
+                entries: dummyEntries,
+            });
+        });
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace YandexGamesPlugin.Core
@@ -23,6 +24,7 @@ namespace YandexGamesPlugin.Core
         public static event Action PlayerAuthenticationFailed;
         
         public static event Action<String, Boolean> LeaderboardScoreProcessed;
+        public static event Action<String, YandexGamesLeaderboardEntry[]> LeaderboardRecordsReceived;
         
         private void OnSdkSuccessfullyInitialized()
         {
@@ -97,6 +99,12 @@ namespace YandexGamesPlugin.Core
         private void OnLeaderboardScoreSubmissionFailure(String leaderboardId)
         {
             LeaderboardScoreProcessed?.Invoke(leaderboardId, false);
+        }
+        
+        private void OnLeaderboardRecordsReceived(String jsonResponse)
+        {
+            var response = JsonUtility.FromJson<YandexGamesGetLeaderboardRecordsResponse>(jsonResponse);
+            LeaderboardRecordsReceived?.Invoke(response.LeaderboardId, response.Entries ?? Array.Empty<YandexGamesLeaderboardEntry>());
         }
     }
 }

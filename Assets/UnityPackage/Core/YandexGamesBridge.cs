@@ -45,7 +45,10 @@ namespace YandexGamesPlugin.Core
 
         [DllImport("__Internal")]
         public static extern void SubmitLeaderboardScore(String leaderboardId, Int32 score);
-        
+
+        [DllImport("__Internal")]
+        public static extern void GetLeaderboardEntries(String leaderboardId, Boolean includePlayer, Int32 topEntriesCount, Int32 surroundingEntriesCount);
+
         [DllImport("__Internal")]
         public static extern void DisplayInAppReviewPopup();
 
@@ -114,6 +117,11 @@ namespace YandexGamesPlugin.Core
                 
                 Initialize();
             }
+        }
+
+        public static void GetLeaderboardRecords(String leaderboardId, Boolean includePlayer, Int32 topEntriesCount, Int32 surroundingEntriesCount)
+        {
+            GetLeaderboardEntries(leaderboardId, includePlayer, topEntriesCount, surroundingEntriesCount);
         }
     }
 }
