@@ -9,9 +9,10 @@ const ygp_mock_helper = {
 }
 
 const ygp_sdk_mock_leaderboardsModule = {
-    createLeaderboardEntry: function (username, score) {
+    createLeaderboardEntry: function (position, username, score) {
         return {
             score: score,
+            rank: position,
             player: {
                 publicName: username,
                 scopePermissions: {
@@ -29,13 +30,19 @@ const ygp_sdk_mock_leaderboardsModule = {
             let maxScore = 10000;
             let dummyEntries = [];
             for (let i = 0; i < params.quantityTop; ++i) {
-                dummyEntries[i] = this.createLeaderboardEntry("DummyPlayerName" + i, maxScore - i * 34);
+                dummyEntries[i] = this.createLeaderboardEntry(i, "DummyPlayerName" + i, maxScore - i * 34);
+            }
+
+            if (params.quantityTop > 1) { //Swapping elements to simulate sequence is out of order
+                let tempEntry = dummyEntries[0];
+                dummyEntries[0] = dummyEntries[dummyEntries.length - 1];
+                dummyEntries[dummyEntries.length - 1] = tempEntry;
             }
 
             if (params.includeUser) {
-                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry("Someone better than you", 20);
-                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry("YOU", 10);
-                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry("Someone worse than you", 0);
+                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(dummyEntries.length, "Someone better than you", 20);
+                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(dummyEntries.length, "YOU", 10);
+                dummyEntries[dummyEntries.length] = this.createLeaderboardEntry(dummyEntries.length, "Someone worse than you", 0);
             }
 
             resolve({

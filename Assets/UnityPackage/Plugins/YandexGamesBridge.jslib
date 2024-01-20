@@ -258,6 +258,7 @@ var yandexBridgeLibrary = {
                     let entries = [];
                     for (let i = 0; i < result.entries.length; ++i) {
                         entries[i] = {
+                            Rank: result.entries[i].rank,
                             Username: result.entries[i].player.scopePermissions.public_name == "allow" ? result.entries[i].player.publicName : "anonymous",
                             Score: result.entries[i].score,
                         };
