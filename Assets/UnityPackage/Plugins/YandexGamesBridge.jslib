@@ -15,7 +15,13 @@ var yandexBridgeLibrary = {
                 console.error("[YandexGamesBridge]: " + message);
             }
         },
-        sendUnityMessage: function (methodName, optionalParameter) { //multiple optinal parameters are not supported by Unity's SendMessage
+        getSerializedPurchase: function(purchase) {
+            return JSON.stringify({
+                ProductId: purchase.productID,
+                TransactionId: purchase.purchaseToken
+            });
+        },
+        sendUnityMessage: function (methodName, optionalParameter) { //multiple optional parameters are not supported by Unity's SendMessage
             unityInstance.SendMessage(YGP.unityListenerName, methodName, optionalParameter);
         },
     },
@@ -140,7 +146,7 @@ var yandexBridgeLibrary = {
             YGP.iapModule.purchase(id)
                 .then(purchase => {
                     YGP.logMessage("Successfully purchased " + id);
-                    YGP.sendUnityMessage("OnProductPurchased", purchase.productID);
+                    YGP.sendUnityMessage("OnProductPurchased", YGP.getSerializedPurchase(purchase));
                     RestoreFocus();
                 })
                 .catch(error => {
@@ -178,10 +184,8 @@ var yandexBridgeLibrary = {
             YGP.iapModule.getPurchases()
                 .then(purchases => {
                     for (i = 0; i < purchases.length; ++i) {
-                        if (purchases[i].productID === id) {
-                            YGP.logMessage("Found unconsumed product with id '" + id + "', trying to process it once again.");
-                            YGP.sendUnityMessage("OnProductPurchased", purchase.productID);                            
-                        }
+                        YGP.logMessage("Found unconsumed product with id '" + purchases[i].productID + "', trying to process it once again.");
+                        YGP.sendUnityMessage("OnProductPurchased", YGP.getSerializedPurchase(purchases[i]));
                     }
                 });
         }

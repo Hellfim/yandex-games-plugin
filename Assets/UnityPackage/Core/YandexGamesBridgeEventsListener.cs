@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
+using YandexGamesPlugin.Core.UnityPurchase;
 
 namespace YandexGamesPlugin.Core
 {
@@ -17,7 +17,7 @@ namespace YandexGamesPlugin.Core
         public static event Action IAPModuleInitialized;
         public static event Action<String> IAPModuleInitializationFailed;
         public static event Action<String> IAPProductsLoaded;
-        public static event Action<String> ProductPurchased;
+        public static event Action<YandexGamesPurchase> ProductPurchased;
         public static event Action<String> ProductPurchaseFailed;
         
         public static event Action PlayerAuthenticated;
@@ -71,9 +71,9 @@ namespace YandexGamesPlugin.Core
             IAPProductsLoaded?.Invoke(jsonProductsMetadata);
         }
         
-        private void OnProductPurchased(String productId)
+        private void OnProductPurchased(String serializedPurchase)
         {
-            ProductPurchased?.Invoke(productId);
+            ProductPurchased?.Invoke(JsonUtility.FromJson<YandexGamesPurchase>(serializedPurchase));
         }
         
         private void OnProductPurchaseFailed(String productId)

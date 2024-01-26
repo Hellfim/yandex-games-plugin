@@ -106,9 +106,9 @@ namespace YandexGamesPlugin.Core.UnityPurchase
             return new ProductDescription(productInfo.Id, new ProductMetadata(productInfo.Price, productInfo.Title, productInfo.Description, productInfo.PriceCurrencyCode, price));
         }
 
-        private void OnProductPurchased(String productId)
+        private void OnProductPurchased(YandexGamesPurchase purchase)
         {
-            _storeEvents.OnPurchaseSucceeded(productId, null, null);
+            _storeEvents.OnPurchaseSucceeded(purchase.ProductId, null, purchase.TransactionId);
         }
 
         private void OnProductPurchaseFailed(String productId)
