@@ -240,8 +240,26 @@ var yandexBridgeLibrary = {
     SubmitLeaderboardScore: function (leaderboardIdPointer, score) {
         let leaderboardId = UTF8ToString(leaderboardIdPointer);
         try {
-            YGP.leaderboardsModule.setLeaderboardScore(leaderboardId, score);
-            YGP.sendUnityMessage("OnLeaderboardScoreSubmissionSuccess", leaderboardId);
+            YGP.leaderboardsModule
+               .getLeaderboardPlayerEntry(leaderboardId)
+               .then(result => {
+                   //Score should be updated only if stored player's score is lower than new player score
+                   //However, even if new score is lower it's treated as successful score submission  
+                   if (result.score < score) {
+                       YGP.leaderboardsModule.setLeaderboardScore(leaderboardId, score);
+                   }
+                   YGP.sendUnityMessage("OnLeaderboardScoreSubmissionSuccess", leaderboardId);
+               })
+               .catch(error => {
+                   if (error.code === "LEADERBOARD_PLAYER_NOT_PRESENT") {
+                       YGP.leaderboardsModule.setLeaderboardScore(leaderboardId, score);
+                       YGP.sendUnityMessage("OnLeaderboardScoreSubmissionSuccess", leaderboardId);
+                   }
+                   else {
+                       YGP.logError("Failed to submit score '" + score + "' to the leaderboard with id '" + leaderboardId + "'", error);
+                       YGP.sendUnityMessage("OnLeaderboardScoreSubmissionFailure", leaderboardId);
+                   }
+               });
         }
         catch (error) {
             YGP.logError("Failed to submit score '" + score + "' to the leaderboard with id '" + leaderboardId + "'", error);
