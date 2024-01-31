@@ -157,6 +157,7 @@ var yandexBridgeLibrary = {
         }
         catch (error) {
             YGP.logError("Failed to purchase '" + id + "'", error);
+            YGP.sendUnityMessage("OnProductPurchaseFailed", id);
             RestoreFocus();
         }
     },
