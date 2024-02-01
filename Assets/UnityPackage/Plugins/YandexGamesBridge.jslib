@@ -2,6 +2,7 @@ var yandexBridgeLibrary = {
     $YGP: {
         ysdk: null,
         iapModule: null,
+        playerAccountModule: null,
         leaderboardsModule: null,
         unityListenerName: null,
         logMessage: function (message) {
@@ -195,26 +196,62 @@ var yandexBridgeLibrary = {
         }
     },
     
-    AuthenticatePlayer: function () {
-        YGP.ysdk.getPlayer()
+    InitializePlayerAccountModule: function() {
+        YGP.ysdk.getPlayer({scopes: false})
             .then(player => {
                 let authenticationStatus = player.getMode();
                 YGP.logMessage("Authentication status (mode): '" + authenticationStatus + "'");
                 if (authenticationStatus === "lite") { //Unauthenticated
-                    YGP.ysdk.auth.openAuthDialog()
-                        .then(() => {
-                            YGP.logMessage("Player authenticated successfully!");
-                            YGP.sendUnityMessage("OnPlayerAuthenticated");
-                        })
-                        .catch(error => {
-                            YGP.logError("Failed to authenticate player", error);
-                            YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
-                        });
+                    YGP.logMessage("Player is not authenticated!");
+                    YGP.playerAccountModule = {
+                        isAuthenticated: false,
+                        player: player
+                    };
                 }
                 else {
+                    YGP.playerAccountModule = {
+                        isAuthenticated: true,
+                        player: player
+                    };
                     YGP.logMessage("Player authenticated successfully!");
                     YGP.sendUnityMessage("OnPlayerAuthenticated");
                 }
+            })
+            .catch(error => {
+                YGP.playerAccountModule = {
+                    isAuthenticated: false,
+                };
+                YGP.logError("Failed to initialize player account module", error);
+            });
+    },
+    
+    AuthenticatePlayer: function () {        
+        if (YGP.playerAccountModule == null) {
+            YGP.logError("Player account module is not initialized")
+            YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
+            return;
+        }
+        
+        if (YGP.playerAccountModule.isAuthenticated) {
+            YGP.logMessage("Player is already authenticated");
+            YGP.sendUnityMessage("OnPlayerAuthenticated");
+            return;
+        }
+        
+        YGP.ysdk.auth.openAuthDialog()
+            .then(() => {
+                YGP.ysdk.getPlayer({scopes: false})
+                    .then(player => {
+                        YGP.playerAccountModule = {
+                            isAuthenticated: true,
+                            player: player
+                        };
+                        YGP.logMessage("Player authenticated successfully!");
+                        YGP.sendUnityMessage("OnPlayerAuthenticated");
+                    })
+                    .catch(error => {
+                        YGP.logError("Failed to authenticate player", error);
+                    });
             })
             .catch(error => {
                 YGP.logError("Failed to authenticate player", error);

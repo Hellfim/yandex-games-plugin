@@ -38,6 +38,9 @@ namespace YandexGamesPlugin.Core
         public static extern void ProcessUnconsumedProducts();
 
         [DllImport("__Internal")]
+        private static extern void InitializePlayerAccountModule();
+        
+        [DllImport("__Internal")]
         public static extern void AuthenticatePlayer();
 
         [DllImport("__Internal")]
@@ -60,6 +63,8 @@ namespace YandexGamesPlugin.Core
         public static void InitializeIAPs() => InitializeModule(InitializeIAPModule);
 
         public static void InitializeLeaderboards() => InitializeModule(InitializeLeaderboardsModule);
+
+        public static void InitializePlayerAccount() => InitializeModule(InitializePlayerAccountModule);
         
         public static void Initialize()
         {
