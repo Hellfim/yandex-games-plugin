@@ -264,14 +264,14 @@ var yandexBridgeLibrary = {
     LoadCloudPlayerData: function () {
         if (YGP.playerAccountModule == null || YGP.playerAccountModule.player == null) {
             YGP.logError("Player account module is not initialized")
-            YGP.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify("LoadingError"));
+            YGP.sendUnityMessage("OnCloudPlayerDataLoaded", "LoadingError");
             return;
         }
-                
+        
         YGP.playerAccountModule.player
             .getData()
-            .then(data => {
-                YGP.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify(data));
+            .then(blob => {
+                YGP.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify(blob));
             })
             .catch(error => {
                 YGP.logError("Failed to load cloud data", error);
@@ -280,11 +280,7 @@ var yandexBridgeLibrary = {
     
     SaveCloudPlayerData: function(jsonBlobPointer) {
         let jsonBlob = UTF8ToString(jsonBlobPointer);
-        YGP.logMessage("Received json blob:");
-        console.log(jsonBlob);
         let blob = JSON.parse(jsonBlob);
-        YGP.logMessage("Blob:");
-        console.log(blob);
         YGP.playerAccountModule.player
             .setData(blob, true)
             .then(() => {
