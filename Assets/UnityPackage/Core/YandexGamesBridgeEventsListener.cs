@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using UnityEngine;
 using YandexGamesPlugin.Core.UnityPurchase;
 
@@ -20,11 +21,15 @@ namespace YandexGamesPlugin.Core
         public static event Action<YandexGamesPurchase> ProductPurchased;
         public static event Action<String> ProductPurchaseFailed;
         
+        public static event Action PlayerAccountModuleInitialized;
+        public static event Action PlayerAccountModuleInitializationFailed;
         public static event Action PlayerAuthenticated;
         public static event Action PlayerAuthenticationFailed;
         
         public static event Action<String, Boolean> LeaderboardScoreProcessed;
         public static event Action<String, YandexGamesLeaderboardEntry[]> LeaderboardRecordsReceived;
+        
+        public static event Action<YandexGamesCloudSaveBlob> CloudPlayerDataLoaded;
         
         private void OnSdkSuccessfullyInitialized()
         {
@@ -81,6 +86,16 @@ namespace YandexGamesPlugin.Core
             ProductPurchaseFailed?.Invoke(productId);
         }
         
+        private void OnPlayerAccountModuleInitialized()
+        {
+            PlayerAccountModuleInitialized?.Invoke();
+        }
+        
+        private void OnPlayerAccountModuleInitializationFailed()
+        {
+            PlayerAccountModuleInitializationFailed?.Invoke();
+        }
+        
         private void OnPlayerAuthenticated()
         {
             PlayerAuthenticated?.Invoke();
@@ -105,6 +120,17 @@ namespace YandexGamesPlugin.Core
         {
             var response = JsonUtility.FromJson<YandexGamesGetLeaderboardRecordsResponse>(jsonResponse);
             LeaderboardRecordsReceived?.Invoke(response.LeaderboardId, response.Entries ?? Array.Empty<YandexGamesLeaderboardEntry>());
+        }
+        
+        private void OnCloudPlayerDataLoaded(String jsonResponse)
+        {
+            if (String.Equals(jsonResponse, "LoadingError"))
+            {
+                Debug.LogError("Received an error during cloud data loading. See console for details");
+                return;
+            }
+            
+            CloudPlayerDataLoaded?.Invoke(JsonConvert.DeserializeObject<YandexGamesCloudSaveBlob>(jsonResponse));
         }
     }
 }

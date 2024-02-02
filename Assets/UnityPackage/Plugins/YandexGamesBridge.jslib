@@ -207,6 +207,7 @@ var yandexBridgeLibrary = {
                         isAuthenticated: false,
                         player: player
                     };
+                    YGP.sendUnityMessage("OnPlayerAccountModuleInitialized");
                 }
                 else {
                     YGP.playerAccountModule = {
@@ -214,14 +215,15 @@ var yandexBridgeLibrary = {
                         player: player
                     };
                     YGP.logMessage("Player authenticated successfully!");
-                    YGP.sendUnityMessage("OnPlayerAuthenticated");
+                    YGP.sendUnityMessage("OnPlayerAccountModuleInitialized");
                 }
             })
             .catch(error => {
                 YGP.playerAccountModule = {
                     isAuthenticated: false,
                 };
-                YGP.logError("Failed to initialize player account module", error);
+                YGP.logError("Failed to correctly initialize player account module", error);
+                YGP.sendUnityMessage("OnPlayerAccountModuleInitializationFailed");
             });
     },
     
@@ -256,6 +258,40 @@ var yandexBridgeLibrary = {
             .catch(error => {
                 YGP.logError("Failed to authenticate player", error);
                 YGP.sendUnityMessage("OnPlayerAuthenticationFailed");
+            });
+    },
+    
+    LoadCloudPlayerData: function () {
+        if (YGP.playerAccountModule == null || YGP.playerAccountModule.player == null) {
+            YGP.logError("Player account module is not initialized")
+            YGP.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify("LoadingError"));
+            return;
+        }
+                
+        YGP.playerAccountModule.player
+            .getData()
+            .then(data => {
+                YGP.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify(data));
+            })
+            .catch(error => {
+                YGP.logError("Failed to load cloud data", error);
+            });
+    },
+    
+    SaveCloudPlayerData: function(jsonBlobPointer) {
+        let jsonBlob = UTF8ToString(jsonBlobPointer);
+        YGP.logMessage("Received json blob:");
+        console.log(jsonBlob);
+        let blob = JSON.parse(jsonBlob);
+        YGP.logMessage("Blob:");
+        console.log(blob);
+        YGP.playerAccountModule.player
+            .setData(blob, true)
+            .then(() => {
+                YGP.logMessage("Successfully saved cloud data");
+            })
+            .catch(error => {
+                YGP.logError("Failed to save cloud data", error);
             });
     },
     

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace YandexGamesPlugin.Core
@@ -42,6 +43,12 @@ namespace YandexGamesPlugin.Core
         
         [DllImport("__Internal")]
         public static extern void AuthenticatePlayer();
+        
+        [DllImport("__Internal")]
+        public static extern void LoadCloudPlayerData();
+        
+        [DllImport("__Internal")]
+        public static extern void SaveCloudPlayerData(String jsonBlob);
 
         [DllImport("__Internal")]
         private static extern void InitializeLeaderboardsModule();
@@ -127,6 +134,11 @@ namespace YandexGamesPlugin.Core
         public static void GetLeaderboardRecords(String leaderboardId, Boolean includePlayer, Int32 topEntriesCount, Int32 surroundingEntriesCount)
         {
             GetLeaderboardEntries(leaderboardId, includePlayer, topEntriesCount, surroundingEntriesCount);
+        }
+
+        public static void SaveCloudPlayerData(YandexGamesCloudSaveBlob blob)
+        {
+            SaveCloudPlayerData(JsonConvert.SerializeObject(blob));
         }
     }
 }
