@@ -55,6 +55,29 @@ const ygp_sdk_mock_leaderboardsModule = {
     }
 }
 
+const ygp_sdk_mock_playerAccountModule = {
+    authenticationStatus: "lite",
+    getMode: function () {
+        ygp_mock_helper.logMessage("player.getMode");
+        return this.authenticationStatus;
+    },
+    getData: function (keys) {
+        ygp_mock_helper.logMessage("player.getData");
+        return new Promise((resolve, reject) => {
+            resolve({
+                StringData: {},
+                IntegerData: {},
+            });
+        });
+    },
+    setData: function (data, flush) {
+        ygp_mock_helper.logMessage("player.setData");
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
+    }
+}
+
 const ygp_sdk_mock_iapModule = {
     productsCatalog: [],
     purchases: [],
@@ -89,7 +112,6 @@ const ygp_sdk_mock_iapModule = {
 }
 
 const ygp_sdk_mock = {
-    playerAuthenticationStatus: "lite",
     features: {
         LoadingAPI: {
             ready: function() {
@@ -124,12 +146,7 @@ const ygp_sdk_mock = {
     getPlayer: function () {
         ygp_mock_helper.logMessage("getPlayer");
         return new Promise((resolve, reject) => {
-            resolve({
-                getMode: function () {
-                    ygp_mock_helper.logMessage("player.getMode");
-                    return ygp_sdk_mock.playerAuthenticationStatus;
-                }
-            });
+            resolve(ygp_sdk_mock_playerAccountModule);
         });
     },
     auth: {
@@ -138,7 +155,7 @@ const ygp_sdk_mock = {
             return new Promise(async (resolve, reject) => {
                 ygp_mock_helper.logMessage("openAuthDialog started");
                 await ygp_mock_helper.timeout(2000);
-                ygp_sdk_mock.playerAuthenticationStatus = "";
+                ygp_sdk_mock_playerAccountModule.authenticationStatus = "";
                 ygp_mock_helper.logMessage("openAuthDialog ended");
                 resolve();
             });
@@ -155,8 +172,8 @@ const ygp_sdk_mock = {
             ygp_mock_helper.logMessage("feedback.canReview");
             return new Promise((resolve, reject) => {
                 resolve({
-                    value: ygp_sdk_mock.playerAuthenticationStatus !== "lite",
-                    reason: ygp_sdk_mock.playerAuthenticationStatus !== "lite" ? "" : "NO_AUTH"
+                    value: ygp_sdk_mock_playerAccountModule.authenticationStatus !== "lite",
+                    reason: ygp_sdk_mock_playerAccountModule.authenticationStatus !== "lite" ? "" : "NO_AUTH"
                 });
             });
         },
