@@ -25,6 +25,22 @@ var yandexBridgeLibrary = {
         sendUnityMessage: function (methodName, optionalParameter) { //multiple optional parameters are not supported by Unity's SendMessage
             unityInstance.SendMessage(YGP.unityListenerName, methodName, optionalParameter);
         },
+        loadPlayerCloudData: function() {
+            if (this.playerAccountModule == null || this.playerAccountModule.player == null) {
+                this.logError("Player account module is not initialized")
+                this.sendUnityMessage("OnCloudPlayerDataLoaded", "LoadingError");
+                return;
+            }
+                    
+            this.playerAccountModule.player
+                .getData()
+                .then(blob => {
+                    this.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify(blob));
+                })
+                .catch(error => {
+                    this.logError("Failed to load cloud data", error);
+                });
+        },
     },
     
     Initialize: function (listenerName) {
@@ -250,6 +266,7 @@ var yandexBridgeLibrary = {
                         };
                         YGP.logMessage("Player authenticated successfully!");
                         YGP.sendUnityMessage("OnPlayerAuthenticated");
+                        YGP.loadPlayerCloudData();
                     })
                     .catch(error => {
                         YGP.logError("Failed to authenticate player", error);
@@ -262,20 +279,7 @@ var yandexBridgeLibrary = {
     },
     
     LoadCloudPlayerData: function () {
-        if (YGP.playerAccountModule == null || YGP.playerAccountModule.player == null) {
-            YGP.logError("Player account module is not initialized")
-            YGP.sendUnityMessage("OnCloudPlayerDataLoaded", "LoadingError");
-            return;
-        }
-        
-        YGP.playerAccountModule.player
-            .getData()
-            .then(blob => {
-                YGP.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify(blob));
-            })
-            .catch(error => {
-                YGP.logError("Failed to load cloud data", error);
-            });
+        YGP.loadPlayerCloudData();
     },
     
     SaveCloudPlayerData: function(jsonBlobPointer) {
