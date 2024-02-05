@@ -27,5 +27,5 @@ createUnityInstance(canvas, config)
     })
     .catch(error => {
         console.error("Failed to start UnityInstance: " + error)
-		document.body.innerHTML += "<div id=\"error-overlay\"><span>"+ error +"</span></div>";
+		document.body.innerHTML = "<div id=\"error-overlay\"><span>"+ error +"</span></div>";
     });
