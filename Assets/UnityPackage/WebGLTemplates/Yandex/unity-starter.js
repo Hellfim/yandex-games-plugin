@@ -21,6 +21,17 @@ const config = {
     // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
 };
 
+let builtInAlert = alert;
+alert = function(message) {
+    if (message != null && typeof(message) == "string") {
+        if (message.indexOf("AbortError: Fetch is aborted") != -1) {
+            console.log("Suppressed exception: \"AbortError: Fetch is aborted\"");
+            return;
+        }
+    }
+    builtInAlert(message);
+}
+
 createUnityInstance(canvas, config)
     .then(createdInstance => {
         unityInstance = createdInstance;
