@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 using YandexGamesPlugin.Core.UnityPurchase;
@@ -130,6 +131,9 @@ namespace YandexGamesPlugin.Core
                 return;
             }
             
+            var blob = JsonConvert.DeserializeObject<YandexGamesCloudSaveBlob>(jsonResponse);
+            blob.StringData ??= new Dictionary<String, String>();
+            blob.IntegerData ??= new Dictionary<String, Int32>();
             CloudPlayerDataLoaded?.Invoke(JsonConvert.DeserializeObject<YandexGamesCloudSaveBlob>(jsonResponse));
         }
     }
