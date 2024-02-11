@@ -32,11 +32,24 @@ alert = function(message) {
     builtInAlert(message);
 }
 
-createUnityInstance(canvas, config)
-    .then(createdInstance => {
-        unityInstance = createdInstance;
-    })
-    .catch(error => {
-        console.error("Failed to start UnityInstance: " + error)
-		document.body.innerHTML = "<div id=\"error-overlay\"><span>"+ error +"</span></div>";
-    });
+function InitializeYandexGamesSDK() {
+    window.YGPsdk = null;
+    YaGames
+        .init()
+        .then(sdk => { window.YGPsdk = sdk; })
+        .catch(error => { console.log("YandexGamesSDK initialization failed", error); });
+}
+
+async function BootstrapGame() {
+    await InitializeYandexGamesSDK();
+    createUnityInstance(canvas, config)
+        .then(createdInstance => {
+            unityInstance = createdInstance;
+        })
+        .catch(error => {
+            console.error("Failed to start UnityInstance: " + error)
+            document.body.innerHTML = "<div id=\"error-overlay\"><span>"+ error +"</span></div>";
+        });
+}
+
+BootstrapGame();

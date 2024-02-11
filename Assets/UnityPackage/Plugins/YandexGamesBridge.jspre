@@ -25,17 +25,15 @@ let YGP = {
         unityInstance.SendMessage(YGP.unityListenerName, methodName, optionalParameter);
     },
     initialize: function () {
-        YaGames
-            .init()
-            .then(sdk => {
-                YGP.ysdk = sdk;
-                YGP.logMessage("SDK initialized")
-                YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
-            })
-            .catch(error => {
-                YGP.logError("SDK initialization failed", error);
-                YGP.sendUnityMessage("OnSdkInitializationFailure");
-            });
+        if (window.YGPsdk == null) {
+            YGP.logError("SDK initialization failed", error);
+            YGP.sendUnityMessage("OnSdkInitializationFailure");
+        }
+        else {
+            YGP.ysdk = window.YGPsdk;
+            YGP.logMessage("SDK initialized")
+            YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
+        }
     },
     submitGameReady: function () {
         if (YGP.ysdk !== null && typeof (YGP.ysdk.features.LoadingAPI) !== "undefined" && YGP.ysdk.features.LoadingAPI !== null) {
