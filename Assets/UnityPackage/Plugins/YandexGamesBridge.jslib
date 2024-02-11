@@ -54,5 +54,8 @@ var yandexBridgeLibrary = {
     DisplayInAppReviewPopup: function () {
         YGP.displayInAppReviewPopup();
     },
+    GetPreferredLanguage: function () {
+        return YGP.getPreferredLanguage();
+    },
 };
 mergeInto(LibraryManager.library, yandexBridgeLibrary);

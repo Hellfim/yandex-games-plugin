@@ -366,4 +366,21 @@ let YGP = {
             YGP.logError("Failed display review dialog", error);
         }
     },
+    getPreferredLanguage: function () {
+        try {
+            let sdk = YGP.ysdk == null ? window.YGPsdk : YGP.ysdk;
+            if (sdk == null) {
+                YGP.logError("Failed to get preferred language: sdk not found");
+                return null;
+            }
+            let language = sdk.environment.i18n.lang; 
+            let bufferSize = lengthBytesUTF8(language) + 1;
+            let buffer = _malloc(bufferSize);
+            stringToUTF8(language, buffer, bufferSize);
+            return buffer;
+        }
+        catch (error) {
+            YGP.logError("Failed to get preferred language", error);
+        }
+    },
 };

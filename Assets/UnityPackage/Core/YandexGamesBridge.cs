@@ -61,6 +61,9 @@ namespace YandexGamesPlugin.Core
 
         [DllImport("__Internal")]
         public static extern void DisplayInAppReviewPopup();
+        
+        [DllImport("__Internal")]
+        public static extern String GetPreferredLanguage();
 
         private static Boolean _isSDKInitialized;
         private static Boolean _isSDKBeingInitialized;

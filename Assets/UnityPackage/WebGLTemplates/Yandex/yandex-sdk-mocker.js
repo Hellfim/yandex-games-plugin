@@ -184,6 +184,11 @@ const ygp_sdk_mock = {
             });
         }
     },
+    environment: {
+        i18n: {
+            lang: "en"
+        }
+    },
 }
 
 const YaGames = {
