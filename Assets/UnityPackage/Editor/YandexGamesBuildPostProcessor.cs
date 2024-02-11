@@ -20,7 +20,7 @@ namespace YandexGamesPlugin.Editor
 
         private static String GetAbsolutePackageRootPath()
         {
-            return IsAssetPackage ? Application.dataPath : GetLibraryPackagePath(PackageName);
+            return IsAssetPackage ? $"{Application.dataPath}/UnityPackage" : GetLibraryPackagePath(PackageName);
         }
 
         private static String GetLibraryPackagePath(String packageName)
@@ -37,11 +37,6 @@ namespace YandexGamesPlugin.Editor
 
         public void OnPreprocessBuild(BuildReport report)
         {
-            if (IsAssetPackage) //Copying is required only for library packages
-            {
-                return;
-            }
-            
             var destinationFolder = Path.GetFullPath(TemporaryTemplateFolder);
             var sourceFolder = $"{GetAbsolutePackageRootPath()}/WebGLTemplates/{TemplateName}";
 
