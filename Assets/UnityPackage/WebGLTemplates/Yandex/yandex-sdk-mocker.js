@@ -130,6 +130,9 @@ const ygp_sdk_mock = {
             container.callbacks.onClose();
             ygp_mock_helper.logMessage("adv.showRewardedVideo ended");
         },
+        showFullscreenAdv: async function (container) {
+            ygp_mock_helper.logMessage("adv.showFullscreenAdv invoked");
+        },
         showBannerAdv: function() {
             ygp_mock_helper.logMessage("adv.showBannerAdv");
         },
@@ -192,8 +195,10 @@ const ygp_sdk_mock = {
 }
 
 const YaGames = {
-    init: function () {
-        ygp_mock_helper.logMessage("YaGames.init");
+    init: async function () {
+        ygp_mock_helper.logMessage("YaGames.init started");
+        await ygp_mock_helper.timeout(1000);
+        ygp_mock_helper.logMessage("YaGames.init finished");
         return new Promise((resolve, reject) => {
             resolve(ygp_sdk_mock);
         });

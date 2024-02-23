@@ -34,14 +34,32 @@ alert = function(message) {
 
 function InitializeYandexGamesSDK() {
     window.YGPsdk = null;
-    YaGames
-        .init()
-        .then(sdk => { window.YGPsdk = sdk; })
-        .catch(error => { console.log("YandexGamesSDK initialization failed", error); });
+    return new Promise((resolve, reject) => {
+        YaGames
+            .init()
+            .then(sdk => {
+                window.YGPsdk = sdk;
+                resolve();
+            })
+            .catch(error => {
+                console.log("YandexGamesSDK initialization failed", error);
+                reject();
+            });
+    });
 }
 
 async function BootstrapGame() {
     await InitializeYandexGamesSDK();
+    if (window.YGPsdk != null) {
+        YGPsdk.adv.showFullscreenAdv({
+            callbacks:{
+                onClose: function(wasShown) { },
+                onOpen: function() { },
+                onError: function(error) { },
+                onOffline: function() { },
+            }
+        });
+    }
     createUnityInstance(canvas, config)
         .then(createdInstance => {
             unityInstance = createdInstance;
