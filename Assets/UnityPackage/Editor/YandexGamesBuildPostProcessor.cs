@@ -1,5 +1,4 @@
-﻿#if UNITY_WEBGL
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using UnityEditor;
@@ -37,6 +36,11 @@ namespace YandexGamesPlugin.Editor
 
         public void OnPreprocessBuild(BuildReport report)
         {
+            if (!IsWebGLPlatform(report))
+            {
+                return;
+            }
+            
             var destinationFolder = Path.GetFullPath(TemporaryTemplateFolder);
             var sourceFolder = $"{GetAbsolutePackageRootPath()}/WebGLTemplates/{TemplateName}";
 
@@ -52,6 +56,11 @@ namespace YandexGamesPlugin.Editor
 
         public void OnPostprocessBuild(BuildReport report)
         {
+            if (!IsWebGLPlatform(report))
+            {
+                return;
+            }
+            
             AssetDatabase.DeleteAsset(TemporaryTemplateFolder);
             if (Directory.EnumerateFiles(ProjectTemplatesRootFolder).Any())
             {
@@ -78,6 +87,8 @@ namespace YandexGamesPlugin.Editor
                 File.WriteAllLines(filePath, lines);
             }
         }
+
+        private static Boolean IsWebGLPlatform(BuildReport report)
+            => report.summary.platform == BuildTarget.WebGL;
     }
 }
-#endif
