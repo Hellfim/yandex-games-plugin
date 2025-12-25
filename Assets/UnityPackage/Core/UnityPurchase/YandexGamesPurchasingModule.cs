@@ -1,13 +1,12 @@
-﻿using UnityEngine.Purchasing.Extension;
+﻿#if YANDEX_GAMES_BUILD
+using UnityEngine.Purchasing.Extension;
 
 namespace YandexGamesPlugin.Core.UnityPurchase
 {
     public class YandexGamesPurchasingModule : AbstractPurchasingModule
     {
         public override void Configure()
-        {
-            RegisterStore("YandexGames", YandexGamesStore.GetInstance());
-        }
+            => RegisterStore("YandexGames", YandexGamesStore.GetInstance());
 
         private static YandexGamesPurchasingModule _currentInstance;
 
@@ -23,3 +22,4 @@ namespace YandexGamesPlugin.Core.UnityPurchase
         }
     }
 }
+#endif

@@ -5,7 +5,16 @@ var yandexBridgeLibrary = {
     },    
     SubmitGameReady: function () {
         YGP.submitGameReady();
-    },    
+    },
+    SubmitGameplayStart: function () {
+        YGP.submitGameplayStart();
+    },
+    SubmitGameplayStop: function () {
+        YGP.submitGameplayStop();
+    },
+    ShowInterstitialAd: function () {
+        YGP.showInterstitialAd();
+    },
     ShowRewardedVideoAd: function () {
         YGP.showRewardedVideoAd();
     },
@@ -29,18 +38,15 @@ var yandexBridgeLibrary = {
     },    
     ProcessUnconsumedProducts: function () {
         YGP.processUnconsumedProducts();
-    },    
-    InitializePlayerAccountModule: function() {
-        YGP.initializePlayerAccountModule();
-    },    
+    },
     AuthenticatePlayer: function () {
         YGP.authenticatePlayer();
-    },    
-    LoadCloudPlayerData: function () {
+    },
+    LoadPlayerCloudData: function () {
         YGP.loadPlayerCloudData();
-    },    
-    SaveCloudPlayerData: function(jsonBlobPointer) {
-        YGP.savePlayerCloudData(UTF8ToString(jsonBlobPointer));
+    },
+    SavePlayerCloudData: function(jsonDataPointer) {
+        YGP.savePlayerCloudData(UTF8ToString(jsonDataPointer));
     },    
     InitializeLeaderboardsModule: function () {
         YGP.initializeLeaderboardsModule();
@@ -51,8 +57,8 @@ var yandexBridgeLibrary = {
     GetLeaderboardEntries: function (leaderboardIdPointer, includePlayer, topEntriesCount, surroundingEntriesCount) {
         YGP.getLeaderboardEntries(UTF8ToString(leaderboardIdPointer), includePlayer, topEntriesCount, surroundingEntriesCount);
     },
-    DisplayInAppReviewPopup: function () {
-        YGP.displayInAppReviewPopup();
+    ShowReviewPopup: function () {
+        YGP.showReviewPopup();
     },
     GetPreferredLanguage: function () {
         return YGP.getPreferredLanguage();

@@ -10,19 +10,28 @@ namespace YandexGamesPlugin.Core
     {
         [DllImport("__Internal")]
         private static extern void Initialize(String listenerName);
-        
+
         [DllImport("__Internal")]
         public static extern void SubmitGameReady();
-        
+
+        [DllImport("__Internal")]
+        public static extern void SubmitGameplayStart();
+
+        [DllImport("__Internal")]
+        public static extern void SubmitGameplayStop();
+
+        [DllImport("__Internal")]
+        public static extern void ShowInterstitialAd();
+
         [DllImport("__Internal")]
         public static extern void ShowRewardedVideoAd();
-        
+
         [DllImport("__Internal")]
         public static extern void DisplayBanner();
-        
+
         [DllImport("__Internal")]
         public static extern void HideBanner();
-        
+
         [DllImport("__Internal")]
         private static extern void InitializeIAPModule();
 
@@ -39,16 +48,13 @@ namespace YandexGamesPlugin.Core
         public static extern void ProcessUnconsumedProducts();
 
         [DllImport("__Internal")]
-        private static extern void InitializePlayerAccountModule();
-        
-        [DllImport("__Internal")]
         public static extern void AuthenticatePlayer();
-        
+
         [DllImport("__Internal")]
-        public static extern void LoadCloudPlayerData();
-        
+        public static extern void LoadPlayerCloudData();
+
         [DllImport("__Internal")]
-        public static extern void SaveCloudPlayerData(String jsonBlob);
+        private static extern void SavePlayerCloudData(String jsonData);
 
         [DllImport("__Internal")]
         private static extern void InitializeLeaderboardsModule();
@@ -60,8 +66,8 @@ namespace YandexGamesPlugin.Core
         public static extern void GetLeaderboardEntries(String leaderboardId, Boolean includePlayer, Int32 topEntriesCount, Int32 surroundingEntriesCount);
 
         [DllImport("__Internal")]
-        public static extern void DisplayInAppReviewPopup();
-        
+        public static extern void ShowReviewPopup();
+
         [DllImport("__Internal")]
         public static extern String GetPreferredLanguage();
 
@@ -70,50 +76,45 @@ namespace YandexGamesPlugin.Core
 
         private static readonly List<Action> _initializationCallbacks = new List<Action>();
 
-        public static void InitializeIAPs() => InitializeModule(InitializeIAPModule);
+        public static void InitializePurchaseModule() => InitializeModule(InitializeIAPModule);
 
         public static void InitializeLeaderboards() => InitializeModule(InitializeLeaderboardsModule);
 
-        public static void InitializePlayerAccount() => InitializeModule(InitializePlayerAccountModule);
-        
         public static void Initialize()
         {
             if (_isSDKInitialized || _isSDKBeingInitialized)
             {
                 return;
             }
-            
+
             _isSDKBeingInitialized = true;
-            
+
             const String listenerObjectName = nameof(YandexGamesBridgeEventsListener);
             var gameObject = new GameObject(listenerObjectName);
             gameObject.AddComponent<YandexGamesBridgeEventsListener>();
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
-            
-            YandexGamesBridgeEventsListener.SdkInitialized += OnSdkInitialized;
-            YandexGamesBridgeEventsListener.SdkInitializationFailed += OnSdkInitializationFailed;
+
+            YandexGamesBridgeEventsListener.InitializationFinished += OnInitializationFinished;
             Initialize(listenerObjectName);
         }
 
-        private static void OnSdkInitialized()
+        private static void OnInitializationFinished(Boolean result)
         {
-            YandexGamesBridgeEventsListener.SdkInitialized -= OnSdkInitialized;
-            YandexGamesBridgeEventsListener.SdkInitializationFailed -= OnSdkInitializationFailed;
+            YandexGamesBridgeEventsListener.InitializationFinished -= OnInitializationFinished;
             _isSDKBeingInitialized = false;
+
+            if (!result)
+            {
+                return;
+            }
+
             _isSDKInitialized = true;
             foreach (var initializationCallback in _initializationCallbacks)
             {
                 initializationCallback?.Invoke();
             }
-            
-            _initializationCallbacks.Clear();
-        }
 
-        private static void OnSdkInitializationFailed()
-        {
-            YandexGamesBridgeEventsListener.SdkInitialized -= OnSdkInitialized;
-            YandexGamesBridgeEventsListener.SdkInitializationFailed -= OnSdkInitializationFailed;
-            _isSDKBeingInitialized = false;
+            _initializationCallbacks.Clear();
         }
 
         private static void InitializeModule(Action initializationMethod)
@@ -129,7 +130,7 @@ namespace YandexGamesPlugin.Core
                 {
                     return;
                 }
-                
+
                 Initialize();
             }
         }
@@ -139,9 +140,7 @@ namespace YandexGamesPlugin.Core
             GetLeaderboardEntries(leaderboardId, includePlayer, topEntriesCount, surroundingEntriesCount);
         }
 
-        public static void SaveCloudPlayerData(YandexGamesCloudSaveBlob blob)
-        {
-            SaveCloudPlayerData(JsonConvert.SerializeObject(blob));
-        }
+        public static void SavePlayerCloudData(YandexGamesPlayerCloudData data)
+            => SavePlayerCloudData(JsonConvert.SerializeObject(data));
     }
 }

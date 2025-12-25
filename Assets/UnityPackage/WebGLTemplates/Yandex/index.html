@@ -8,13 +8,21 @@
     <link rel="stylesheet" href="./style.css">
     <title>{{{ PRODUCT_NAME }}}</title>
     <script src="https://yandex.ru/games/sdk/v2"></script>
-    <script src="yandex-sdk-mocker.js"></script>
   </head>
   <body>
-    <canvas id="unity-canvas" tabindex="-1"></canvas>
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+    </div>
+    <div id="loading-overlay">
+      <div id="loading-progress">
+        <div class="loading-progress-spinner"></div>
+        <div id="loading-progress-bar" style="display: none;">
+          <div id="loading-progress-bar-filler"></div>
+        </div>
+      </div>
+    </div>
     <script src="Build/{{{ LOADER_FILENAME }}}"></script>
     <script src="common.js"></script>
     <script src="unity-starter.js"></script>
-    <script src="canvas-size-processor.js"></script>
   </body>
 </html>

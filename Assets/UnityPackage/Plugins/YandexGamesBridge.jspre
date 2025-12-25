@@ -4,6 +4,7 @@ let YGP = {
     playerAccountModule: null,
     leaderboardsModule: null,
     unityListenerName: null,
+    isGameReadySent: false,
     logMessage: function (message) {
         console.log("[YandexGamesBridge]: " + message);
     },
@@ -32,15 +33,72 @@ let YGP = {
         else {
             YGP.ysdk = window.YGPsdk;
             YGP.logMessage("SDK initialized")
-            YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
+            YGP.ysdk.getPlayer({scopes: false})
+                .then(player => {
+                    YGP.playerAccountModule = {
+                        isAuthenticated: player.isAuthorized(),
+                        player: player
+                    };
+                    YGP.sendUnityMessage("OnSdkSuccessfullyInitialized");
+                })
+                .catch(error => {
+                    YGP.playerAccountModule = {
+                        isAuthenticated: false,
+                    };
+                    YGP.logError("Failed to correctly initialize player account module", error);
+                    YGP.sendUnityMessage("OnSdkInitializationFailure");
+                });
         }
     },
     submitGameReady: function () {
         if (YGP.ysdk !== null && typeof (YGP.ysdk.features.LoadingAPI) !== "undefined" && YGP.ysdk.features.LoadingAPI !== null) {
-            YGP.ysdk.features.LoadingAPI.ready();
+            if (!YGP.isGameReadySent) {
+                YGP.ysdk.features.LoadingAPI.ready();
+                YGP.isGameReadySent = true;
+            }
         }
         else {
             YGP.logError("SDK is not initialized or 'ready' feature is unavailable");
+        }
+    },
+    submitGameplayStart: function () {
+        if (YGP.ysdk !== null && typeof (YGP.ysdk.features.GameplayAPI) !== "undefined" && YGP.ysdk.features.GameplayAPI !== null) {
+            YGP.ysdk.features.GameplayAPI.start();
+        }
+        else {
+            YGP.logError("SDK is not initialized or 'gameplay start' feature is unavailable");
+        }
+    },
+    submitGameplayStop: function () {
+        if (YGP.ysdk !== null && typeof (YGP.ysdk.features.GameplayAPI) !== "undefined" && YGP.ysdk.features.GameplayAPI !== null) {
+            YGP.ysdk.features.GameplayAPI.stop();
+        }
+        else {
+            YGP.logError("SDK is not initialized or 'gameplay stop' feature is unavailable");
+        }
+    },
+    showInterstitialAd: function () {
+        try {
+            YGP.ysdk.adv.showFullscreenAdv({
+                callbacks: {
+                    onOpen: () => {
+                        YGP.logMessage("InterstitialAd opened");
+                        YGP.sendUnityMessage("OnInterstitialAdOpened");
+                    },
+                    onClose: () => {
+                        YGP.logMessage("InterstitialAd closed");
+                        YGP.sendUnityMessage("OnInterstitialAdClosed");
+                    },
+                    onError: error => {
+                        YGP.logError("InterstitialAd failed to display", error);
+                        YGP.sendUnityMessage("OnInterstitialAdReceivedError");
+                    }
+                }
+            });
+        }
+        catch (error) {
+            YGP.logError("RewardedVideoAd failed to display", error);
+            YGP.sendUnityMessage("OnRewardedVideoAdReceivedError");
         }
     },
     showRewardedVideoAd: function () {
@@ -178,36 +236,6 @@ let YGP = {
             YGP.logError("Failed to process unconsumed products", error);
         }
     },
-    initializePlayerAccountModule: function() {
-        YGP.ysdk.getPlayer({scopes: false})
-            .then(player => {
-                let authenticationStatus = player.getMode();
-                YGP.logMessage("Authentication status (mode): '" + authenticationStatus + "'");
-                if (authenticationStatus === "lite") { //Unauthenticated
-                    YGP.logMessage("Player is not authenticated!");
-                    YGP.playerAccountModule = {
-                        isAuthenticated: false,
-                        player: player
-                    };
-                    YGP.sendUnityMessage("OnPlayerAccountModuleInitialized");
-                }
-                else {
-                    YGP.playerAccountModule = {
-                        isAuthenticated: true,
-                        player: player
-                    };
-                    YGP.logMessage("Player authenticated successfully!");
-                    YGP.sendUnityMessage("OnPlayerAccountModuleInitialized");
-                }
-            })
-            .catch(error => {
-                YGP.playerAccountModule = {
-                    isAuthenticated: false,
-                };
-                YGP.logError("Failed to correctly initialize player account module", error);
-                YGP.sendUnityMessage("OnPlayerAccountModuleInitializationFailed");
-            });
-    },
     authenticatePlayer: function () {
         if (YGP.playerAccountModule == null) {
             YGP.logError("Player account module is not initialized")
@@ -245,23 +273,23 @@ let YGP = {
     loadPlayerCloudData: function() {
         if (this.playerAccountModule == null || this.playerAccountModule.player == null) {
             this.logError("Player account module is not initialized")
-            this.sendUnityMessage("OnCloudPlayerDataLoaded", "LoadingError");
+            this.sendUnityMessage("OnPlayerCloudDataLoaded", "LoadingError");
             return;
         }
 
         this.playerAccountModule.player
-            .getData()
-            .then(blob => {
-                this.sendUnityMessage("OnCloudPlayerDataLoaded", JSON.stringify(blob));
+            .getData(["playerData"])
+            .then(data => {
+                this.sendUnityMessage("OnPlayerCloudDataLoaded", data.playerData == null ? JSON.stringify({}) : data.playerData);
             })
             .catch(error => {
                 this.logError("Failed to load cloud data", error);
+                this.sendUnityMessage("OnPlayerCloudDataLoaded", "LoadingError");
             });
     },
-    savePlayerCloudData: function(jsonBlob) {
-        let blob = JSON.parse(jsonBlob);
+    savePlayerCloudData: function(jsonData) {
         YGP.playerAccountModule.player
-            .setData(blob, true)
+            .setData({playerData: jsonData}, true)
             .then(() => {
                 YGP.logMessage("Successfully saved cloud data");
             })
@@ -341,7 +369,7 @@ let YGP = {
             YGP.logError("Failed to get leaderboard '" + leaderboardId + "' entries", error);
         }
     },
-    displayInAppReviewPopup: function () {
+    showReviewPopup: function () {
         try {
             YGP.ysdk.feedback.canReview()
                 .then(({value, reason}) => {

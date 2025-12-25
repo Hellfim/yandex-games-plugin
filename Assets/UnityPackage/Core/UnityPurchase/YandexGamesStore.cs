@@ -31,11 +31,11 @@ namespace YandexGamesPlugin.Core.UnityPurchase
         {
             _storeEvents = callback;
 
-            YandexGamesBridge.InitializeIAPs();
+            YandexGamesBridge.InitializePurchaseModule();
             
-            YandexGamesBridgeEventsListener.IAPModuleInitialized += OnIAPModuleInitialized;
-            YandexGamesBridgeEventsListener.IAPModuleInitializationFailed += OnIAPModuleInitializationFailed;
-            YandexGamesBridgeEventsListener.IAPProductsLoaded += OnIAPProductsLoaded;
+            YandexGamesBridgeEventsListener.PurchaseModuleInitialized += OnPurchaseModuleInitialized;
+            YandexGamesBridgeEventsListener.PurchaseModuleInitializationFailed += OnPurchaseModuleInitializationFailed;
+            YandexGamesBridgeEventsListener.ProductsLoaded += OnProductsLoaded;
             YandexGamesBridgeEventsListener.ProductPurchased += OnProductPurchased;
             YandexGamesBridgeEventsListener.ProductPurchaseFailed += OnProductPurchaseFailed;
         }
@@ -68,14 +68,14 @@ namespace YandexGamesPlugin.Core.UnityPurchase
             }
         }
 
-        private void OnIAPModuleInitialized()
+        private void OnPurchaseModuleInitialized()
         {
             _isClientInitialized = true;
 
             LoadProducts();
         }
 
-        private void OnIAPModuleInitializationFailed(String message)
+        private void OnPurchaseModuleInitializationFailed(String message)
         {
             _storeEvents.OnSetupFailed(InitializationFailureReason.PurchasingUnavailable, message);
         }
@@ -90,11 +90,12 @@ namespace YandexGamesPlugin.Core.UnityPurchase
             YandexGamesBridge.LoadIAPProducts();
         }
         
-        private void OnIAPProductsLoaded(String jsonProductsMetadata)
+        private void OnProductsLoaded(String jsonProductsMetadata)
         {
-            _storeEvents.OnProductsRetrieved(YandexGamesUtils.GetArrayFromJson<YandexGamesProductInfo>(jsonProductsMetadata)
-                                             .Select(GetProductDescriptionFromYandexGamesProductInfo)
-                                             .ToList());
+            _storeEvents.OnProductsRetrieved(
+                YandexGamesUtils.GetArrayFromJson<YandexGamesProductInfo>(jsonProductsMetadata)
+                    .Select(GetProductDescriptionFromYandexGamesProductInfo)
+                    .ToList());
 
             YandexGamesBridge.ProcessUnconsumedProducts();
         }

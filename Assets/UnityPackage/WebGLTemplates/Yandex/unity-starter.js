@@ -24,7 +24,7 @@ const config = {
 let builtInAlert = alert;
 alert = function(message) {
     if (message != null && typeof(message) == "string") {
-        if (message.indexOf("AbortError: Fetch is aborted") != -1) {
+        if (message.indexOf("AbortError: Fetch is aborted") !== -1) {
             console.log("Suppressed exception: \"AbortError: Fetch is aborted\"");
             return;
         }
@@ -60,14 +60,18 @@ async function BootstrapGame() {
             }
         });
     }
-    createUnityInstance(canvas, config)
-        .then(createdInstance => {
-            unityInstance = createdInstance;
-        })
-        .catch(error => {
-            console.error("Failed to start UnityInstance: " + error)
-            document.body.innerHTML = "<div id=\"error-overlay\"><span>"+ error +"</span></div>";
-        });
+    createUnityInstance(canvas, config, (progress) => {
+        loadingSpinner.style.display = "none";
+        loadingBar.style.display = "";
+        loadingBarFiller.style.width = `${100 * Math.max(progress, 0.05)}%`;
+    }).then(createdInstance => {
+        unityInstance = createdInstance;
+        loadingOverlay.style.background = "";
+        loadingOverlay.style.display = "none";
+    }).catch(error => {
+        console.error("Failed to start UnityInstance: " + error)
+        document.body.innerHTML = "<div id=\"error-overlay\"><span>" + error + "</span></div>";
+    });
 }
 
 BootstrapGame();
