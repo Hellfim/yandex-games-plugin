@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace YandexGamesPlugin.Core
+namespace YandexGamesPlugin.Runtime
 {
     public static class YandexGamesBridge
     {

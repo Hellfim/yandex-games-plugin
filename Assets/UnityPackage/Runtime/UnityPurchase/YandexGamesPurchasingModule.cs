@@ -1,7 +1,7 @@
 ﻿#if YANDEX_GAMES_BUILD
 using UnityEngine.Purchasing.Extension;
 
-namespace YandexGamesPlugin.Core.UnityPurchase
+namespace YandexGamesPlugin.Runtime.UnityPurchase
 {
     public class YandexGamesPurchasingModule : AbstractPurchasingModule
     {

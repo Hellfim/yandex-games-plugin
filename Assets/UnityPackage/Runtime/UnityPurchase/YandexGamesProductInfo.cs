@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YandexGamesPlugin.Core.UnityPurchase
+namespace YandexGamesPlugin.Runtime.UnityPurchase
 {
     [Serializable]
     public class YandexGamesProductInfo

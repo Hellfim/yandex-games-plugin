@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace YandexGamesPlugin.Core
+namespace YandexGamesPlugin.Runtime
 {
     [Serializable]
     public class YandexGamesPlayerCloudData

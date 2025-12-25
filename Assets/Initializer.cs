@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-using YandexGamesPlugin.Core;
+using YandexGamesPlugin.Runtime;
 
 namespace DefaultNamespace
 {

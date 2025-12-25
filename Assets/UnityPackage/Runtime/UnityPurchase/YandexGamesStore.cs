@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
 
-namespace YandexGamesPlugin.Core.UnityPurchase
+namespace YandexGamesPlugin.Runtime.UnityPurchase
 {
     public class YandexGamesStore : IStore
     {

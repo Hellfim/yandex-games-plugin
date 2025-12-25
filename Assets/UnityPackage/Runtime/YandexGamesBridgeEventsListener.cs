@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using YandexGamesPlugin.Core.UnityPurchase;
+using YandexGamesPlugin.Runtime.UnityPurchase;
 
-namespace YandexGamesPlugin.Core
+namespace YandexGamesPlugin.Runtime
 {
     public class YandexGamesBridgeEventsListener : MonoBehaviour
     {

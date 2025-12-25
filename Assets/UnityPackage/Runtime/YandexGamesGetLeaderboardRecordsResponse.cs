@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YandexGamesPlugin.Core
+namespace YandexGamesPlugin.Runtime
 {
     public class YandexGamesGetLeaderboardRecordsResponse
     {
