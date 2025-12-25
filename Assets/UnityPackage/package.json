@@ -2,7 +2,7 @@
     "name": "com.hellfim.yandex-games-plugin",
     "displayName": "YandexGamesPlugin",
     "author": { "name": "Hellfim", "url": "https://github.com/Hellfim" },
-    "version": "1.3.4",
+    "version": "1.4.0",
     "unity": "2022.3",
-    "description": "This plugin provides simple access to YandexGames API, basically acting like a bridge."
+    "description": "This plugin provides access to the YandexGames API acting like a simple bridge"
 }
